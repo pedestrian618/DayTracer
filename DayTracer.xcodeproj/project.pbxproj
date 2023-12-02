@@ -1,0 +1,797 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F3A2B9BC2B1B302E005201B4 /* DayTracerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */; };
+		F3A2B9BE2B1B302E005201B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BD2B1B302E005201B4 /* ContentView.swift */; };
+		F3A2B9C02B1B302E005201B4 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BF2B1B302E005201B4 /* Item.swift */; };
+		F3A2B9C22B1B302F005201B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3A2B9C12B1B302F005201B4 /* Assets.xcassets */; };
+		F3A2B9C52B1B302F005201B4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3A2B9C42B1B302F005201B4 /* Preview Assets.xcassets */; };
+		F3A2B9D12B1B302F005201B4 /* DayTracerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9D02B1B302F005201B4 /* DayTracerTests.swift */; };
+		F3A2B9DB2B1B302F005201B4 /* DayTracerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9DA2B1B302F005201B4 /* DayTracerUITests.swift */; };
+		F3A2B9DD2B1B302F005201B4 /* DayTracerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9DC2B1B302F005201B4 /* DayTracerUITestsLaunchTests.swift */; };
+		F3A2B9EA2B1B305D005201B4 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9E92B1B305D005201B4 /* HomeView.swift */; };
+		F3A2B9EC2B1B308B005201B4 /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9EB2B1B308B005201B4 /* NotesView.swift */; };
+		F3E74A342B1B373F00902D64 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E74A332B1B373F00902D64 /* WidgetKit.framework */; };
+		F3E74A362B1B373F00902D64 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E74A352B1B373F00902D64 /* SwiftUI.framework */; };
+		F3E74A392B1B373F00902D64 /* DayTracerWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */; };
+		F3E74A3B2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */; };
+		F3E74A3D2B1B373F00902D64 /* DayTracerWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */; };
+		F3E74A3F2B1B373F00902D64 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3E2B1B373F00902D64 /* AppIntent.swift */; };
+		F3E74A412B1B374000902D64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3E74A402B1B374000902D64 /* Assets.xcassets */; };
+		F3E74A452B1B374000902D64 /* DayTracerWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F3E74A312B1B373F00902D64 /* DayTracerWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F3A2B9CD2B1B302F005201B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3A2B9B02B1B302E005201B4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A2B9B72B1B302E005201B4;
+			remoteInfo = DayTracer;
+		};
+		F3A2B9D72B1B302F005201B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3A2B9B02B1B302E005201B4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A2B9B72B1B302E005201B4;
+			remoteInfo = DayTracer;
+		};
+		F3E74A432B1B374000902D64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3A2B9B02B1B302E005201B4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3E74A302B1B373F00902D64;
+			remoteInfo = DayTracerWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F3E74A462B1B374000902D64 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F3E74A452B1B374000902D64 /* DayTracerWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F3A2B9B82B1B302E005201B4 /* DayTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerApp.swift; sourceTree = "<group>"; };
+		F3A2B9BD2B1B302E005201B4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F3A2B9BF2B1B302E005201B4 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		F3A2B9C12B1B302F005201B4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F3A2B9C42B1B302F005201B4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F3A2B9C62B1B302F005201B4 /* DayTracer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayTracer.entitlements; sourceTree = "<group>"; };
+		F3A2B9C72B1B302F005201B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F3A2B9CC2B1B302F005201B4 /* DayTracerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DayTracerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A2B9D02B1B302F005201B4 /* DayTracerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerTests.swift; sourceTree = "<group>"; };
+		F3A2B9D62B1B302F005201B4 /* DayTracerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DayTracerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A2B9DA2B1B302F005201B4 /* DayTracerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerUITests.swift; sourceTree = "<group>"; };
+		F3A2B9DC2B1B302F005201B4 /* DayTracerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F3A2B9E92B1B305D005201B4 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F3A2B9EB2B1B308B005201B4 /* NotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesView.swift; sourceTree = "<group>"; };
+		F3E74A312B1B373F00902D64 /* DayTracerWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DayTracerWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3E74A332B1B373F00902D64 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		F3E74A352B1B373F00902D64 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsBundle.swift; sourceTree = "<group>"; };
+		F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsLiveActivity.swift; sourceTree = "<group>"; };
+		F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgets.swift; sourceTree = "<group>"; };
+		F3E74A3E2B1B373F00902D64 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		F3E74A402B1B374000902D64 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F3E74A422B1B374000902D64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F3A2B9B52B1B302E005201B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2B9C92B1B302F005201B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2B9D32B1B302F005201B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3E74A2E2B1B373F00902D64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3E74A362B1B373F00902D64 /* SwiftUI.framework in Frameworks */,
+				F3E74A342B1B373F00902D64 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F3A2B9AF2B1B302E005201B4 = {
+			isa = PBXGroup;
+			children = (
+				F3A2B9BA2B1B302E005201B4 /* DayTracer */,
+				F3A2B9CF2B1B302F005201B4 /* DayTracerTests */,
+				F3A2B9D92B1B302F005201B4 /* DayTracerUITests */,
+				F3E74A372B1B373F00902D64 /* DayTracerWidgets */,
+				F3E74A322B1B373F00902D64 /* Frameworks */,
+				F3A2B9B92B1B302E005201B4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F3A2B9B92B1B302E005201B4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2B9B82B1B302E005201B4 /* DayTracer.app */,
+				F3A2B9CC2B1B302F005201B4 /* DayTracerTests.xctest */,
+				F3A2B9D62B1B302F005201B4 /* DayTracerUITests.xctest */,
+				F3E74A312B1B373F00902D64 /* DayTracerWidgetsExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3A2B9BA2B1B302E005201B4 /* DayTracer */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */,
+				F3A2B9BD2B1B302E005201B4 /* ContentView.swift */,
+				F3A2B9EB2B1B308B005201B4 /* NotesView.swift */,
+				F3A2B9E92B1B305D005201B4 /* HomeView.swift */,
+				F3A2B9BF2B1B302E005201B4 /* Item.swift */,
+				F3A2B9C12B1B302F005201B4 /* Assets.xcassets */,
+				F3A2B9C62B1B302F005201B4 /* DayTracer.entitlements */,
+				F3A2B9C72B1B302F005201B4 /* Info.plist */,
+				F3A2B9C32B1B302F005201B4 /* Preview Content */,
+			);
+			path = DayTracer;
+			sourceTree = "<group>";
+		};
+		F3A2B9C32B1B302F005201B4 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2B9C42B1B302F005201B4 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F3A2B9CF2B1B302F005201B4 /* DayTracerTests */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2B9D02B1B302F005201B4 /* DayTracerTests.swift */,
+			);
+			path = DayTracerTests;
+			sourceTree = "<group>";
+		};
+		F3A2B9D92B1B302F005201B4 /* DayTracerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2B9DA2B1B302F005201B4 /* DayTracerUITests.swift */,
+				F3A2B9DC2B1B302F005201B4 /* DayTracerUITestsLaunchTests.swift */,
+			);
+			path = DayTracerUITests;
+			sourceTree = "<group>";
+		};
+		F3E74A322B1B373F00902D64 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F3E74A332B1B373F00902D64 /* WidgetKit.framework */,
+				F3E74A352B1B373F00902D64 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F3E74A372B1B373F00902D64 /* DayTracerWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */,
+				F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */,
+				F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */,
+				F3E74A3E2B1B373F00902D64 /* AppIntent.swift */,
+				F3E74A402B1B374000902D64 /* Assets.xcassets */,
+				F3E74A422B1B374000902D64 /* Info.plist */,
+			);
+			path = DayTracerWidgets;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F3A2B9B72B1B302E005201B4 /* DayTracer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A2B9E02B1B302F005201B4 /* Build configuration list for PBXNativeTarget "DayTracer" */;
+			buildPhases = (
+				F3A2B9B42B1B302E005201B4 /* Sources */,
+				F3A2B9B52B1B302E005201B4 /* Frameworks */,
+				F3A2B9B62B1B302E005201B4 /* Resources */,
+				F3E74A462B1B374000902D64 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3E74A442B1B374000902D64 /* PBXTargetDependency */,
+			);
+			name = DayTracer;
+			productName = DayTracer;
+			productReference = F3A2B9B82B1B302E005201B4 /* DayTracer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F3A2B9CB2B1B302F005201B4 /* DayTracerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A2B9E32B1B302F005201B4 /* Build configuration list for PBXNativeTarget "DayTracerTests" */;
+			buildPhases = (
+				F3A2B9C82B1B302F005201B4 /* Sources */,
+				F3A2B9C92B1B302F005201B4 /* Frameworks */,
+				F3A2B9CA2B1B302F005201B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3A2B9CE2B1B302F005201B4 /* PBXTargetDependency */,
+			);
+			name = DayTracerTests;
+			productName = DayTracerTests;
+			productReference = F3A2B9CC2B1B302F005201B4 /* DayTracerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F3A2B9D52B1B302F005201B4 /* DayTracerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A2B9E62B1B302F005201B4 /* Build configuration list for PBXNativeTarget "DayTracerUITests" */;
+			buildPhases = (
+				F3A2B9D22B1B302F005201B4 /* Sources */,
+				F3A2B9D32B1B302F005201B4 /* Frameworks */,
+				F3A2B9D42B1B302F005201B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3A2B9D82B1B302F005201B4 /* PBXTargetDependency */,
+			);
+			name = DayTracerUITests;
+			productName = DayTracerUITests;
+			productReference = F3A2B9D62B1B302F005201B4 /* DayTracerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		F3E74A302B1B373F00902D64 /* DayTracerWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3E74A492B1B374000902D64 /* Build configuration list for PBXNativeTarget "DayTracerWidgetsExtension" */;
+			buildPhases = (
+				F3E74A2D2B1B373F00902D64 /* Sources */,
+				F3E74A2E2B1B373F00902D64 /* Frameworks */,
+				F3E74A2F2B1B373F00902D64 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DayTracerWidgetsExtension;
+			productName = DayTracerWidgetsExtension;
+			productReference = F3E74A312B1B373F00902D64 /* DayTracerWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3A2B9B02B1B302E005201B4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					F3A2B9B72B1B302E005201B4 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					F3A2B9CB2B1B302F005201B4 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = F3A2B9B72B1B302E005201B4;
+					};
+					F3A2B9D52B1B302F005201B4 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = F3A2B9B72B1B302E005201B4;
+					};
+					F3E74A302B1B373F00902D64 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = F3A2B9B32B1B302E005201B4 /* Build configuration list for PBXProject "DayTracer" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F3A2B9AF2B1B302E005201B4;
+			productRefGroup = F3A2B9B92B1B302E005201B4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F3A2B9B72B1B302E005201B4 /* DayTracer */,
+				F3A2B9CB2B1B302F005201B4 /* DayTracerTests */,
+				F3A2B9D52B1B302F005201B4 /* DayTracerUITests */,
+				F3E74A302B1B373F00902D64 /* DayTracerWidgetsExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F3A2B9B62B1B302E005201B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A2B9C52B1B302F005201B4 /* Preview Assets.xcassets in Resources */,
+				F3A2B9C22B1B302F005201B4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2B9CA2B1B302F005201B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2B9D42B1B302F005201B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3E74A2F2B1B373F00902D64 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3E74A412B1B374000902D64 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3A2B9B42B1B302E005201B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A2B9BE2B1B302E005201B4 /* ContentView.swift in Sources */,
+				F3A2B9EA2B1B305D005201B4 /* HomeView.swift in Sources */,
+				F3A2B9EC2B1B308B005201B4 /* NotesView.swift in Sources */,
+				F3A2B9C02B1B302E005201B4 /* Item.swift in Sources */,
+				F3A2B9BC2B1B302E005201B4 /* DayTracerApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2B9C82B1B302F005201B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A2B9D12B1B302F005201B4 /* DayTracerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2B9D22B1B302F005201B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A2B9DD2B1B302F005201B4 /* DayTracerUITestsLaunchTests.swift in Sources */,
+				F3A2B9DB2B1B302F005201B4 /* DayTracerUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3E74A2D2B1B373F00902D64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3E74A3B2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift in Sources */,
+				F3E74A3F2B1B373F00902D64 /* AppIntent.swift in Sources */,
+				F3E74A3D2B1B373F00902D64 /* DayTracerWidgets.swift in Sources */,
+				F3E74A392B1B373F00902D64 /* DayTracerWidgetsBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F3A2B9CE2B1B302F005201B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A2B9B72B1B302E005201B4 /* DayTracer */;
+			targetProxy = F3A2B9CD2B1B302F005201B4 /* PBXContainerItemProxy */;
+		};
+		F3A2B9D82B1B302F005201B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A2B9B72B1B302E005201B4 /* DayTracer */;
+			targetProxy = F3A2B9D72B1B302F005201B4 /* PBXContainerItemProxy */;
+		};
+		F3E74A442B1B374000902D64 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3E74A302B1B373F00902D64 /* DayTracerWidgetsExtension */;
+			targetProxy = F3E74A432B1B374000902D64 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F3A2B9DE2B1B302F005201B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F3A2B9DF2B1B302F005201B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F3A2B9E12B1B302F005201B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DayTracer/DayTracer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DayTracer/Preview Content\"";
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DayTracer/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F3A2B9E22B1B302F005201B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DayTracer/DayTracer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DayTracer/Preview Content\"";
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DayTracer/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F3A2B9E42B1B302F005201B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DayTracer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DayTracer";
+			};
+			name = Debug;
+		};
+		F3A2B9E52B1B302F005201B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DayTracer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DayTracer";
+			};
+			name = Release;
+		};
+		F3A2B9E72B1B302F005201B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DayTracer;
+			};
+			name = Debug;
+		};
+		F3A2B9E82B1B302F005201B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DayTracer;
+			};
+			name = Release;
+		};
+		F3E74A472B1B374000902D64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DayTracerWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DayTracerWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracer.DayTracerWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F3E74A482B1B374000902D64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6568PZ3ZJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DayTracerWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DayTracerWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.junkyfly.DayTracer.DayTracerWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F3A2B9B32B1B302E005201B4 /* Build configuration list for PBXProject "DayTracer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A2B9DE2B1B302F005201B4 /* Debug */,
+				F3A2B9DF2B1B302F005201B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A2B9E02B1B302F005201B4 /* Build configuration list for PBXNativeTarget "DayTracer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A2B9E12B1B302F005201B4 /* Debug */,
+				F3A2B9E22B1B302F005201B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A2B9E32B1B302F005201B4 /* Build configuration list for PBXNativeTarget "DayTracerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A2B9E42B1B302F005201B4 /* Debug */,
+				F3A2B9E52B1B302F005201B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A2B9E62B1B302F005201B4 /* Build configuration list for PBXNativeTarget "DayTracerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A2B9E72B1B302F005201B4 /* Debug */,
+				F3A2B9E82B1B302F005201B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3E74A492B1B374000902D64 /* Build configuration list for PBXNativeTarget "DayTracerWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3E74A472B1B374000902D64 /* Debug */,
+				F3E74A482B1B374000902D64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3A2B9B02B1B302E005201B4 /* Project object */;
+}
