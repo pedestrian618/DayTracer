@@ -27,21 +27,23 @@ struct ContentView: View {
             UITabBarItem.appearance().setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
         }
     var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
+ 
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                
+                NotesView()
+                    .tabItem {
+                        Label("Notes", systemImage: "book")
+                    }
+                
+                SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
             
-            NotesView()
-                .tabItem {
-                    Label("Notes", systemImage: "book")
-                }
-
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
         }
     }
 }
@@ -52,16 +54,6 @@ struct ContentView: View {
 
 
 
-
-
-
-struct SettingsView: View {
-    // 設定画面の状態や動作をここに定義する
-    var body: some View {
-        // 設定項目を表示するコード
-        Text("Settings Screen")
-    }
-}
 #Preview {
     ContentView()
     .modelContainer(for: Item.self, inMemory: true)}
