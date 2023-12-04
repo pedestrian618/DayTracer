@@ -49,31 +49,29 @@ struct HomeView: View {
         NavigationView {
             ScrollView { // スクロールビューを追加
                 VStack(spacing: 20) { // 要素間のスペースを設定
-                    Text(Date(), style: .date)
-                                    .font(.system(size: 30, weight: .black, design: .rounded))
-                    
-                    Text(currentTime)
-                    .font(.system(size: 48, weight: .black, design: .monospaced))
-                    .onReceive(timer) { _ in
-                        self.currentTime = timeFormatter.string(from: Date())
+                    // 日付表示セクション
+                    Section(header: Text("").font(.headline)) {
+                        Text(Date(), style: .date)
+                            .font(.system(size: 30, weight: .black, design: .rounded))
                     }
-                    
-                    Group {
-                        VStack {
 
-                            Text("Year Progress")
-                                                .font(.system(size: 20, weight: .semibold, design: .default))
-                            CustomLinearProgressView(progress: yearProgress, color: .blue)
-                                            .frame(height: 20)
-                            Text(String(format: "%.8f%%", yearProgress * 100))
-                                .font(.system(.title2, design: .monospaced)).fontWeight(.bold)
-                            
+                    // 時間表示
+                    Text(currentTime)
+                        .font(.system(size: 48, weight: .black, design: .monospaced))
+                        .onReceive(timer) { _ in
+                            self.currentTime = timeFormatter.string(from: Date())
                         }
+
+                    // 年間進捗セクション
+                    Section(header: Text("Year Progress").font(.headline)) {
+                        CustomLinearProgressView(progress: yearProgress, color: .blue)
+                            .frame(height: 20)
+                        Text(String(format: "%.8f%%", yearProgress * 100))
+                            .font(.system(.title2, design: .monospaced)).fontWeight(.bold)
                     }
-                    
-                    Group {
-                        Text("Today's Progress")
-                            .font(.headline)
+
+                    // 本日の進捗セクション
+                    Section(header: Text("Today's Progress").font(.headline)) {
                         CustomCircleProgressView(progress: $dayProgress, color: .blue)
                     }
                 }
@@ -95,8 +93,7 @@ struct HomeView: View {
                         .frame(height: 40) // 適切なサイズに調整
                 }
             }
-            
-        }
+        }.background(Color.gray)
         }
 }
 

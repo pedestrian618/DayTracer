@@ -13,80 +13,94 @@ import Firebase
 import GoogleSignIn
 
 struct SettingsView: View {
-    //@State private var isSignedIn = false // ログイン状態の追跡
     @ObservedObject var authManager = AuthenticationManager.shared
+
     var body: some View {
-        VStack {
-            if authManager.isSignedIn {
-                // ログイン済みの場合
-                Text("ログイン済み: \(authManager.userName ?? "不明なユーザー")")
-                Text("メール: \(authManager.userEmail ?? "不明なメールアドレス")")
-                if let url = authManager.userProfilePictureURL {
-                    AsyncImage(url: url) { image in
-                        image.resizable()
-                    } placeholder: {
-                        ProgressView()
+        NavigationView {
+            List {
+                if authManager.isSignedIn {
+                    // User is signed in
+                    Section(header: Text("User Info")) {
+                        NavigationLink(destination: UserSettingsView()) {
+                            HStack {
+                                ProfileImageView(url: authManager.userProfilePictureURL)
+                                Text(authManager.userName ?? "Unknown")
+                            }
+                        }
                     }
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
+                } else {
+                    // User is not signed in
+                    Section(header: Text("User Info")) {
+                        NavigationLink(destination: LoginView()) {
+                            Text("Unknown")
+                        }
+                    }
                 }
-                Button("ログアウト") {
-                    authManager.signOut()
-                }
-            } else {
-                // ログインしていない場合
-                Button("GoogleアカウントでLogin") {
-                    authManager.googleAuth()
-                }
+                
+                // Other settings sections
+                // Add other setting options here
             }
+            .navigationTitle("Settings")
         }
     }
-//    private func googleAuth() {
-//            
-//            guard let clientID:String = FirebaseApp.app()?.options.clientID else { return }
-//            let config:GIDConfiguration = GIDConfiguration(clientID: clientID)
-//            
-//            let windowScene:UIWindowScene? = UIApplication.shared.connectedScenes.first as? UIWindowScene
-//            let rootViewController:UIViewController? = windowScene?.windows.first!.rootViewController!
-//            
-//            GIDSignIn.sharedInstance.configuration = config
-//            
-//            GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController!) { result, error in
-//                guard error == nil else {
-//                    print("GIDSignInError: \(error!.localizedDescription)")
-//                    return
-//                }
-//                
-//                guard let user = result?.user,
-//                      let idToken = user.idToken?.tokenString
-//                else {
-//                    return
-//                }
-//                
-//                let credential = GoogleAuthProvider.credential(withIDToken: idToken,accessToken: user.accessToken.tokenString)
-//                self.login(credential: credential)
-//            }
-//        }
-//        
-//    private func login(credential: AuthCredential) {
-//        Auth.auth().signIn(with: credential) { (authResult, error) in
-//            if let error = error {
-//                print("SignInError: \(error.localizedDescription)")
-//                return
-//            }
-//            // ログイン状態を更新
-//            self.isSignedIn = true
-//
-//        }
-//    }
-//    
-//    private func signOut() {
-//            do {
-//                try Auth.auth().signOut()
-//                isSignedIn = false // ログイン状態を更新
-//            } catch let signOutError as NSError {
-//                print("Error signing out: \(signOutError)")
-//            }
-//        }
-
 }
+
+struct LoginView: View {
+    @ObservedObject var authManager = AuthenticationManager.shared
+
+    var body: some View {
+        VStack {
+            Text("Sign in to continue")
+            Button("Sign in with Google") {
+                authManager.googleAuth()
+            }
+            .padding()
+            .foregroundColor(.white)
+            .background(Color.blue)
+            .cornerRadius(8)
+        }.navigationTitle("User Settings")
+    }
+}
+
+struct UserSettingsView: View {
+    @ObservedObject var authManager = AuthenticationManager.shared
+    
+    var body: some View {
+        Form {
+            if let email = authManager.userEmail {
+                Section(header: Text("Email")) {
+                    Text(email)
+                }
+            }
+            
+            Section {
+                Button("Sign Out") {
+                    authManager.signOut()
+                }
+                .foregroundColor(.red)
+            }
+        }
+        .navigationTitle("User Settings")
+    }
+}
+
+struct ProfileImageView: View {
+    let url: URL?
+    
+    var body: some View {
+        if let url = url {
+            AsyncImage(url: url) { image in
+                image.resizable()
+            } placeholder: {
+                ProgressView()
+            }
+            .frame(width: 50, height: 50)
+            .clipShape(Circle())
+        } else {
+            Image(systemName: "person.crop.circle.fill")
+                .resizable()
+                .frame(width: 50, height: 50)
+        }
+    }
+}
+
