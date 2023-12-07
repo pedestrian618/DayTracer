@@ -16,7 +16,7 @@ struct SettingsView: View {
     @ObservedObject var authManager = AuthenticationManager.shared
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 if authManager.isSignedIn {
                     // User is signed in

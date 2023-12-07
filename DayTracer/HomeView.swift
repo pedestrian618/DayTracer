@@ -46,34 +46,39 @@ struct HomeView: View {
     
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView { // スクロールビューを追加
                 VStack(spacing: 20) { // 要素間のスペースを設定
-                    // 日付表示セクション
-                    Section(header: Text("").font(.headline)) {
-                        Text(Date(), style: .date)
-                            .font(.system(size: 30, weight: .black, design: .rounded))
-                    }
+                    Section {
+                                            Text(Date(), style: .date)
+                                                .font(.system(size: 34, weight: .bold, design: .rounded))
+                                                .padding(.bottom, 5) // 日付の下のスペース
+                                            Divider() // 区切り線を追加
+                                        }
 
-                    // 時間表示
-                    Text(currentTime)
-                        .font(.system(size: 48, weight: .black, design: .monospaced))
-                        .onReceive(timer) { _ in
-                            self.currentTime = timeFormatter.string(from: Date())
-                        }
+                                        // 時間表示
+                                        Text(currentTime)
+                                            .font(.system(size: 55, weight: .bold, design: .monospaced))
+                                            .padding(.bottom, 5) // 時間の下のスペース
+                                            .onReceive(timer) { _ in
+                                                self.currentTime = timeFormatter.string(from: Date())
+                                            }
+                                        Divider() // 区切り線を追加
 
-                    // 年間進捗セクション
-                    Section(header: Text("Year Progress").font(.headline)) {
-                        CustomLinearProgressView(progress: yearProgress, color: .blue)
-                            .frame(height: 20)
-                        Text(String(format: "%.8f%%", yearProgress * 100))
-                            .font(.system(.title2, design: .monospaced)).fontWeight(.bold)
-                    }
+                                        // 年間進捗セクション
+                                        Section {
+                                            CustomLinearProgressView(progress: yearProgress, color: .blue)
+                                                .frame(height: 20)
+                                                .padding(.bottom, 5) // プログレスバーの下のスペース
+                                            Text(String(format: "%.8f%%", yearProgress * 100))
+                                                .font(.system(.title2, design: .monospaced)).fontWeight(.bold)
+                                            Divider() // 区切り線を追加
+                                        }
 
-                    // 本日の進捗セクション
-                    Section(header: Text("Today's Progress").font(.headline)) {
-                        CustomCircleProgressView(progress: $dayProgress, color: .blue)
-                    }
+                                        // 本日の進捗セクション
+                                        Section {
+                                            CustomCircleProgressView(progress: $dayProgress, color: .blue)
+                                        }
                 }
                 .onAppear {
                     self.updateProgress()
@@ -127,16 +132,41 @@ struct CustomCircleProgressView: View {
         ZStack {
             Circle()
                 .stroke(lineWidth: 20)
-                .opacity(0.3)
                 .foregroundColor(Color(UIColor.systemGray5))
+                .shadow(color: .white, radius: 4, x: -4, y: -4)
+                .shadow(color: .white, radius: 4, x: 4, y: 4)
+            
             Circle()
                 .trim(from: 0, to: CGFloat(progress))
-                .stroke(color, style: StrokeStyle(lineWidth: 20, lineCap: .round)) // This will create rounded edges
+                .stroke(color, style: StrokeStyle(lineWidth: 20, lineCap: .round))
                 .rotationEffect(Angle(degrees: -90))
                 .animation(.linear, value: progress)
+            
             Text("\(progress * 100, specifier: "%.4f")%")
                 .font(.system(size: 20, weight: .bold, design: .default))
         }
         .frame(width: 150, height: 150)
     }
 }
+//円形プログレスパー表示
+//struct CustomCircleProgressView: View {
+//    @Binding var progress: Double
+//    var color: Color
+//
+//    var body: some View {
+//        ZStack {
+//            Circle()
+//                .stroke(lineWidth: 20)
+//                .opacity(0.3)
+//                .foregroundColor(Color(UIColor.systemGray5))
+//            Circle()
+//                .trim(from: 0, to: CGFloat(progress))
+//                .stroke(color, style: StrokeStyle(lineWidth: 20, lineCap: .round)) // This will create rounded edges
+//                .rotationEffect(Angle(degrees: -90))
+//                .animation(.linear, value: progress)
+//            Text("\(progress * 100, specifier: "%.4f")%")
+//                .font(.system(size: 20, weight: .bold, design: .default))
+//        }
+//        .frame(width: 150, height: 150)
+//    }
+//}
