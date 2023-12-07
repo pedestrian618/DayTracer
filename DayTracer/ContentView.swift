@@ -20,28 +20,32 @@ struct ContentView: View {
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().compactAppearance = appearance
             UINavigationBar.appearance().scrollEdgeAppearance = appearance
+            UINavigationBar.appearance().tintColor = .white
             UITabBar.appearance().backgroundImage = UIImage()
             UITabBar.appearance().shadowImage = UIImage()
-        UITabBar.appearance().backgroundColor = UIColor(named: "DayTracerBlue")?.withAlphaComponent(0.5)
+            UITabBar.appearance().backgroundColor = UIColor(named: "DayTracerBlue")?.withAlphaComponent(0.5)
             UITabBar.appearance().isTranslucent = true
             UITabBarItem.appearance().setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
-        }
-    var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
             
-            NotesView()
-                .tabItem {
-                    Label("Notes", systemImage: "book")
-                }
-
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
+        }
+    var body: some View {
+ 
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                
+                NotesView()
+                    .tabItem {
+                        Label("Notes", systemImage: "book")
+                    }
+                
+                SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+            
         }
     }
 }
@@ -52,16 +56,6 @@ struct ContentView: View {
 
 
 
-
-
-
-struct SettingsView: View {
-    // 設定画面の状態や動作をここに定義する
-    var body: some View {
-        // 設定項目を表示するコード
-        Text("Settings Screen")
-    }
-}
 #Preview {
     ContentView()
     .modelContainer(for: Item.self, inMemory: true)}
