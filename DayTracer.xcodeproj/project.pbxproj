@@ -11,6 +11,13 @@
 		F31316A62B1C1ADC001087B7 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F31316A52B1C1ADC001087B7 /* GoogleSignInSwift */; };
 		F31316A82B1C3C92001087B7 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316A72B1C3C92001087B7 /* WelcomeView.swift */; };
 		F31316AA2B1C6129001087B7 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316A92B1C6129001087B7 /* AuthenticationManager.swift */; };
+		F31316B22B25541A001087B7 /* DayTracerWidgetsSmallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B02B25541A001087B7 /* DayTracerWidgetsSmallView.swift */; };
+		F31316B42B25BCB5001087B7 /* ProgressViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B32B25BCB5001087B7 /* ProgressViews.swift */; };
+		F31316B52B25BCB5001087B7 /* ProgressViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B32B25BCB5001087B7 /* ProgressViews.swift */; };
+		F31316B72B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */; };
+		F31316B92B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */; };
+		F31316BB2B25D270001087B7 /* ProgressCalculators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316BA2B25D270001087B7 /* ProgressCalculators.swift */; };
+		F31316BC2B25D270001087B7 /* ProgressCalculators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316BA2B25D270001087B7 /* ProgressCalculators.swift */; };
 		F3A2B9BC2B1B302E005201B4 /* DayTracerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */; };
 		F3A2B9BE2B1B302E005201B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BD2B1B302E005201B4 /* ContentView.swift */; };
 		F3A2B9C02B1B302E005201B4 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BF2B1B302E005201B4 /* Item.swift */; };
@@ -79,6 +86,11 @@
 /* Begin PBXFileReference section */
 		F31316A72B1C3C92001087B7 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		F31316A92B1C6129001087B7 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
+		F31316B02B25541A001087B7 /* DayTracerWidgetsSmallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsSmallView.swift; sourceTree = "<group>"; };
+		F31316B32B25BCB5001087B7 /* ProgressViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViews.swift; sourceTree = "<group>"; };
+		F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsMediumView.swift; sourceTree = "<group>"; };
+		F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsLargeView.swift; sourceTree = "<group>"; };
+		F31316BA2B25D270001087B7 /* ProgressCalculators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCalculators.swift; sourceTree = "<group>"; };
 		F3A2B9B82B1B302E005201B4 /* DayTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerApp.swift; sourceTree = "<group>"; };
 		F3A2B9BD2B1B302E005201B4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -176,6 +188,8 @@
 			children = (
 				F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */,
 				F3A2B9BD2B1B302E005201B4 /* ContentView.swift */,
+				F31316B32B25BCB5001087B7 /* ProgressViews.swift */,
+				F31316BA2B25D270001087B7 /* ProgressCalculators.swift */,
 				F31316A72B1C3C92001087B7 /* WelcomeView.swift */,
 				F3A2B9E92B1B305D005201B4 /* HomeView.swift */,
 				F3A2B9EB2B1B308B005201B4 /* NotesView.swift */,
@@ -231,9 +245,12 @@
 				F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */,
 				F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */,
 				F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */,
+				F31316B02B25541A001087B7 /* DayTracerWidgetsSmallView.swift */,
+				F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */,
 				F3E74A3E2B1B373F00902D64 /* AppIntent.swift */,
 				F3E74A402B1B374000902D64 /* Assets.xcassets */,
 				F3E74A422B1B374000902D64 /* Info.plist */,
+				F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */,
 			);
 			path = DayTracerWidgets;
 			sourceTree = "<group>";
@@ -417,6 +434,8 @@
 				F31316AA2B1C6129001087B7 /* AuthenticationManager.swift in Sources */,
 				F3A2B9EA2B1B305D005201B4 /* HomeView.swift in Sources */,
 				F3A2B9EC2B1B308B005201B4 /* NotesView.swift in Sources */,
+				F31316BB2B25D270001087B7 /* ProgressCalculators.swift in Sources */,
+				F31316B42B25BCB5001087B7 /* ProgressViews.swift in Sources */,
 				F3E74A5A2B1B82C400902D64 /* SettingsView.swift in Sources */,
 				F3A2B9C02B1B302E005201B4 /* Item.swift in Sources */,
 				F3A2B9BC2B1B302E005201B4 /* DayTracerApp.swift in Sources */,
@@ -446,9 +465,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E74A3B2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift in Sources */,
+				F31316B72B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift in Sources */,
+				F31316B52B25BCB5001087B7 /* ProgressViews.swift in Sources */,
 				F3E74A3F2B1B373F00902D64 /* AppIntent.swift in Sources */,
 				F3E74A3D2B1B373F00902D64 /* DayTracerWidgets.swift in Sources */,
 				F3E74A392B1B373F00902D64 /* DayTracerWidgetsBundle.swift in Sources */,
+				F31316B92B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift in Sources */,
+				F31316B22B25541A001087B7 /* DayTracerWidgetsSmallView.swift in Sources */,
+				F31316BC2B25D270001087B7 /* ProgressCalculators.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,7 +7,10 @@ xcuserdata/
 # その他Xcode関連
 *.xccheckout
 *.xcuserstate
-project.xcworkspace
+
+# Xcode xcuserdata
+DayTracer.xcodeproj/xcuserdata/
+DayTracer.xcodeproj/project.xcworkspace/
 
 # ビルド生成物
 build/
@@ -17,4 +20,39 @@ DerivedData/
 # 例: ノードモジュール、ログファイルなど
 # node_modules/
 # *.log
-
+# Xcode
+## Mac OS X
+.DS_Store
+## Xcode build files
+build/
+DerivedData/
+## Xcode settings
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3*.xcodeproj/*
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+## Xcode Patch
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+## library
+Pods/*
+Carthage/Build/
+## Other
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+*.swp
+xcuserdata/
+*.moved-aside
+!.gitkeep
