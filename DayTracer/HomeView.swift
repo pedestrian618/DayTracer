@@ -12,6 +12,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var dayProgress: Double = 0
     @State private var yearProgress: Double = 0
+    @State private var monthProgress: Double = 0
     @State private var currentTime: String = ""
     let timeFormatter: DateFormatter
     let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
@@ -24,6 +25,7 @@ struct HomeView: View {
         let now = Date()
         self.dayProgress = ProgressCalculators.calculateDayProgress(for: now)
         self.yearProgress = ProgressCalculators.calculateYearProgress(for: now)
+        self.monthProgress = ProgressCalculators.calculateMonthProgress(for: now)
     }
     
     var body: some View {
@@ -53,6 +55,10 @@ struct HomeView: View {
                         CustomLinearProgressView(progress: yearProgress, color: .blue)
                             .frame(height: 20)
                             .padding(.bottom, 5) // プログレスバーの下のスペース
+                        CustomLinearProgressGradientView(
+                                    progress: yearProgress,
+                                    gradient: Gradient(colors: [.blue, .purple])
+                                ).frame(height: 20)
                         Text(String(format: "%.8f%%", yearProgress * 100))
                             .font(.system(.title2, design: .monospaced)).fontWeight(.bold)
                         Divider() // 区切り線を追加
@@ -64,7 +70,20 @@ struct HomeView: View {
                             CustomCircleProgressView(progress: dayProgress, color: .blue, size: 100)
                             Text("\(dayProgress * 100, specifier: "%.4f")%")
                                 .font(.system(size: 20, weight: .bold, design: .default))
+                            
                         }
+                        CustomCircleProgressGradientView(
+                                    progress: dayProgress,
+                                    gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), // グラデーションの色を定義
+                                    size: 100 // サイズを設定
+                                )
+                    }
+                    
+                    Section {
+                        CustomLinearProgressGradientView(
+                                    progress: monthProgress,
+                                    gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue])
+                                ).frame(height: 20)
                     }
                 }
                 .onAppear {

@@ -247,10 +247,10 @@
 				F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */,
 				F31316B02B25541A001087B7 /* DayTracerWidgetsSmallView.swift */,
 				F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */,
+				F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */,
 				F3E74A3E2B1B373F00902D64 /* AppIntent.swift */,
 				F3E74A402B1B374000902D64 /* Assets.xcassets */,
 				F3E74A422B1B374000902D64 /* Info.plist */,
-				F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */,
 			);
 			path = DayTracerWidgets;
 			sourceTree = "<group>";

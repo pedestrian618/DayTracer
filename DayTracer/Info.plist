@@ -9,6 +9,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>daytracer</string>
 				<string>com.googleusercontent.apps.489808436240-obv7q1emck0ct0a5d4t0utr1vkl6hpsb</string>
 			</array>
 		</dict>
