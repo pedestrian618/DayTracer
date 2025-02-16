@@ -9,16 +9,27 @@ import WidgetKit
 import SwiftUI
 
 struct Provider: AppIntentTimelineProvider {
+    
+    // 共有 UserDefaults から最新のノートを取得するためのヘルパー関数
+    func getLatestNote() -> (text: String, date: String) {
+        let sharedDefaults = UserDefaults(suiteName: "group.junkyfly.daytracer.notes")
+        let text = sharedDefaults?.string(forKey: "latestNoteText") ?? "No Note.Let’s take your diary"
+        let date = sharedDefaults?.string(forKey: "latestNoteDate") ?? ""
+        return (text, date)
+    }
+    
     // Providerの関数では、SimpleEntryの新しいイニシャライザを使用します。
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), selectedColor: .blue, selectedSubColor:.blue)
+        let (noteText, noteDate) = getLatestNote()
+        return SimpleEntry(date: Date(), selectedColor: .blue, selectedSubColor: .blue, latestNoteText: noteText, latestNoteDate: noteDate)
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
         // ColorSettings
         let selectedColor = getColor(from: configuration.selectedColor)
         let selectedSubColor = getColor(from: configuration.selectedSubColor)
-        return SimpleEntry(date: Date(), selectedColor: selectedColor, selectedSubColor:selectedSubColor)
+        let (noteText, noteDate) = getLatestNote()
+        return SimpleEntry(date: Date(), selectedColor: selectedColor, selectedSubColor: selectedSubColor, latestNoteText: noteText, latestNoteDate: noteDate)
     }
     
     // Providerのtimelineメソッド内でSimpleEntryを作成する際に、yearProgressも計算して初期化します。
@@ -38,10 +49,11 @@ struct Provider: AppIntentTimelineProvider {
         let secondsUntilNextMinute = 60 - currentSecond
 
         for minuteOffset in 0..<15 {
-                if let entryDate = calendar.date(byAdding: .second, value: secondsUntilNextMinute + (minuteOffset * 60), to: currentDate) {
-                    let entry = SimpleEntry(date: entryDate, selectedColor: selectedColor,selectedSubColor:selectedSubColor)
-                    entries.append(entry)
-                }
+            if let entryDate = calendar.date(byAdding: .second, value: secondsUntilNextMinute + (minuteOffset * 60), to: currentDate) {
+                            let (noteText, noteDate) = getLatestNote()
+                            let entry = SimpleEntry(date: entryDate, selectedColor: selectedColor, selectedSubColor: selectedSubColor, latestNoteText: noteText, latestNoteDate: noteDate)
+                            entries.append(entry)
+                        }
             }
 
         // 最初のエントリーが現在時刻の次の分から始まるように設定
@@ -71,15 +83,19 @@ struct SimpleEntry: TimelineEntry {
     let monthProgress: Double
     let selectedColor: Color
     let selectedSubColor: Color
+    let latestNoteText: String
+    let latestNoteDate: String
 
     // 日付を基にしてイニシャライザ内で年間の進捗を計算する
-    init(date: Date, selectedColor: Color, selectedSubColor:Color) {
+    init(date: Date, selectedColor: Color, selectedSubColor:Color, latestNoteText: String, latestNoteDate: String) {
             self.date = date
             self.yearProgress = ProgressCalculators.calculateYearProgress(for: date)
             self.dayProgress = ProgressCalculators.calculateDayProgress(for: date)
             self.monthProgress=ProgressCalculators.calculateMonthProgress(for: date)
             self.selectedColor = selectedColor
             self.selectedSubColor = selectedSubColor
+            self.latestNoteText = latestNoteText
+            self.latestNoteDate = latestNoteDate
     }
 }
 
@@ -142,6 +158,6 @@ struct DayTracerWidgets: Widget {
 #Preview(as: .systemSmall) {
     DayTracerWidgets()
 } timeline: {
-    SimpleEntry(date: .now, selectedColor: .blue, selectedSubColor:.blue)
-    SimpleEntry(date: .now, selectedColor: .green, selectedSubColor:.blue)
+    SimpleEntry(date: .now, selectedColor: .blue, selectedSubColor:.blue,latestNoteText: "Sample Note Text 1", latestNoteDate: "12/12/2023")
+    SimpleEntry(date: .now, selectedColor: .green, selectedSubColor:.blue,latestNoteText: "Sample Note Text 2", latestNoteDate: "12/12/2023")
 }

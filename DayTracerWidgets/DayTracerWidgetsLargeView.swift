@@ -68,6 +68,19 @@ struct DayTracerWidgetsLargeView: View {
                 }
                 .padding(.horizontal) 
                 
+                
+                // ここに最新のノートを表示
+                VStack(alignment: .leading) {
+                    Text(entry.latestNoteText) // 最新のノートのテキスト
+                        .font(.body)
+                    Text(entry.latestNoteDate) // 最新のノートの日付
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading) // ビューを親の幅に合わせて広げる
+                .padding(.horizontal)
+                
                 // ノートを取るためのボタン
                 Button(action: {
                     // ノートビューへのアクションを追加

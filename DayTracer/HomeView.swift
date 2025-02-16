@@ -8,103 +8,113 @@
 
 import SwiftUI
 
-
 struct HomeView: View {
     @State private var dayProgress: Double = 0
     @State private var yearProgress: Double = 0
     @State private var monthProgress: Double = 0
     @State private var currentTime: String = ""
-    let timeFormatter: DateFormatter
-    let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
-    init() {
-            timeFormatter = DateFormatter()
-            timeFormatter.timeStyle = .medium // This includes hours, minutes, and seconds
-        }
-
-    func updateProgress() {
-        let now = Date()
-        self.dayProgress = ProgressCalculators.calculateDayProgress(for: now)
-        self.yearProgress = ProgressCalculators.calculateYearProgress(for: now)
-        self.monthProgress = ProgressCalculators.calculateMonthProgress(for: now)
-    }
+    
+    private let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
+    
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        return formatter
+    }()
     
     var body: some View {
         NavigationStack {
-            ScrollView { // スクロールビューを追加
-                VStack(spacing: 20) { // 要素間のスペースを設定
-                    
-                    Section {
-                        Text(Date(), style: .date)
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
-                            .padding(.bottom, 5) // 日付の下のスペース
-                        Divider() // 区切り線を追加
-                        }
-                    
-                    Section {
-                        // 時間表示
-                        Text(currentTime)
-                            .font(.system(size: 55, weight: .bold, design: .monospaced))
-                            .padding(.bottom, 5) // 時間の下のスペース
-                            .onReceive(timer) { _ in
-                                self.currentTime = timeFormatter.string(from: Date())
-                            }
-                        Divider() // 区切り線を追加
-                    }
-                    // 年間進捗セクション
-                    Section {
-                        CustomLinearProgressView(progress: yearProgress, color: .blue)
-                            .frame(height: 20)
-                            .padding(.bottom, 5) // プログレスバーの下のスペース
-                        CustomLinearProgressGradientView(
-                                    progress: yearProgress,
-                                    gradient: Gradient(colors: [.blue, .purple])
-                                ).frame(height: 20)
-                        Text(String(format: "%.8f%%", yearProgress * 100))
-                            .font(.system(.title2, design: .monospaced)).fontWeight(.bold)
-                        Divider() // 区切り線を追加
-                    }
-
-                    // 本日の進捗セクション
-                    Section {
-                        ZStack{
-                            CustomCircleProgressView(progress: dayProgress, color: .blue, size: 100)
-                            Text("\(dayProgress * 100, specifier: "%.4f")%")
-                                .font(.system(size: 20, weight: .bold, design: .default))
-                            
-                        }
-                        CustomCircleProgressGradientView(
-                                    progress: dayProgress,
-                                    gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), // グラデーションの色を定義
-                                    size: 100 // サイズを設定
-                                )
-                    }
-                    
-                    Section {
-                        CustomLinearProgressGradientView(
-                                    progress: monthProgress,
-                                    gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue])
-                                ).frame(height: 20)
-                    }
+            ScrollView {
+                VStack(spacing: 20) {
+                    dateSection
+                    timeSection
+                    yearProgressSection
+                    dayProgressSection
+                    monthProgressSection
                 }
                 .onAppear {
-                    self.updateProgress()
-                    self.currentTime = timeFormatter.string(from: Date())
+                    updateProgress()
+                    updateTime()
                 }
                 .onReceive(timer) { _ in
-                    self.updateProgress()
+                    updateProgress()
+                    updateTime()
                 }
                 .padding()
             }
-            .navigationTitle("DayTracer") // ナビゲーションバーにタイトルを設定
-            .navigationBarTitleDisplayMode(.inline).toolbar {
+            .navigationTitle("DayTracer")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Image("logoImage") // ロゴ画像
+                    Image("logoImage")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 40) // 適切なサイズに調整
+                        .frame(height: 40)
                 }
             }
-        }.background(Color.gray)
         }
+        .background(Color.gray)
+    }
+    
+    private var dateSection: some View {
+        Section {
+            Text(Date(), style: .date)
+                .font(.system(size: 34, weight: .bold, design: .rounded))
+                .padding(.bottom, 5)
+            Divider()
+        }
+    }
+    
+    private var timeSection: some View {
+        Section {
+            Text(currentTime)
+                .font(.system(size: 55, weight: .bold, design: .rounded))
+                .padding(.bottom, 5)
+            Divider()
+        }
+    }
+    
+    private var yearProgressSection: some View {
+        Section {
+            CustomLinearProgressView(progress: yearProgress, color: .blue)
+                .frame(height: 20)
+                .padding(.bottom, 5)
+            CustomLinearProgressGradientView(progress: yearProgress, gradient: Gradient(colors: [.blue, .purple]))
+                .frame(height: 20)
+            Text(String(format: "%.8f%%", yearProgress * 100))
+                .font(.system(.title2, design: .monospaced))
+                .fontWeight(.bold)
+            Divider()
+        }
+    }
+    
+    private var dayProgressSection: some View {
+        Section {
+            ZStack {
+                CustomCircleProgressView(progress: dayProgress, color: .blue, size: 100)
+                Text(String(format: "%.4f%%", dayProgress * 100))
+                    .font(.system(size: 20, weight: .bold))
+            }
+            CustomCircleProgressGradientView(progress: dayProgress, gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), size: 100)
+        }
+    }
+    
+    private var monthProgressSection: some View {
+        Section {
+            CustomLinearProgressGradientView(progress: monthProgress, gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]))
+                .frame(height: 20)
+        }
+    }
+    
+    private func updateProgress() {
+        let now = Date()
+        dayProgress = ProgressCalculators.calculateDayProgress(for: now)
+        yearProgress = ProgressCalculators.calculateYearProgress(for: now)
+        monthProgress = ProgressCalculators.calculateMonthProgress(for: now)
+    }
+    
+    private func updateTime() {
+        currentTime = HomeView.timeFormatter.string(from: Date())
+    }
 }
 

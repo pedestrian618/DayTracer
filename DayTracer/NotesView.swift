@@ -135,8 +135,15 @@ struct NotesView: View {
                 print("Error saving diary entry: \(error.localizedDescription)")
             } else {
                 print("Diary entry successfully saved")
+                self.saveLatestDiaryEntryInSharedContainer(entry: entry)
             }
         }
+    }
+    
+    func saveLatestDiaryEntryInSharedContainer(entry: DiaryEntry) {
+        let sharedDefaults = UserDefaults(suiteName: "group.junkyfly.daytracer.notes")
+        sharedDefaults?.set(entry.text, forKey: "latestNoteText")
+        sharedDefaults?.set(entry.date.formatted(), forKey: "latestNoteDate")
     }
     
     func loadDiaryEntries() {
@@ -172,6 +179,7 @@ struct NotesView: View {
             }
         }
     }
+    
 
 }
 
