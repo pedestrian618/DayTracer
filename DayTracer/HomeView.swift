@@ -1,11 +1,3 @@
-//
-//  HomeView.swift
-//  DayTracer
-//
-//  Created by murate on 2023/12/02.
-//
-
-
 import SwiftUI
 
 struct HomeView: View {
@@ -13,12 +5,20 @@ struct HomeView: View {
     @State private var yearProgress: Double = 0
     @State private var monthProgress: Double = 0
     @State private var currentTime: String = ""
+    @State private var seconds: String = ""
+    @State private var latestNotes: [Note] = []
     
-    private let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.timeStyle = .medium
+        formatter.dateFormat = "h:mm" // 時と分のみ
+        return formatter
+    }()
+    
+    private static let secondsFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "ss" // 秒のみ
         return formatter
     }()
     
@@ -26,15 +26,14 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    dateSection
-                    timeSection
-                    yearProgressSection
-                    dayProgressSection
-                    monthProgressSection
+                    headerSection
+                    progressGrid
+                    notesSection
                 }
                 .onAppear {
                     updateProgress()
                     updateTime()
+                    fetchLatestNotes()
                 }
                 .onReceive(timer) { _ in
                     updateProgress()
@@ -53,57 +52,73 @@ struct HomeView: View {
                 }
             }
         }
-        .background(Color.gray)
+        .background(Color.gray.opacity(0.1))
     }
     
-    private var dateSection: some View {
-        Section {
-            Text(Date(), style: .date)
-                .font(.system(size: 34, weight: .bold, design: .rounded))
-                .padding(.bottom, 5)
-            Divider()
-        }
-    }
-    
-    private var timeSection: some View {
-        Section {
-            Text(currentTime)
-                .font(.system(size: 55, weight: .bold, design: .rounded))
-                .padding(.bottom, 5)
-            Divider()
-        }
-    }
-    
-    private var yearProgressSection: some View {
-        Section {
-            CustomLinearProgressView(progress: yearProgress, color: .blue)
-                .frame(height: 20)
-                .padding(.bottom, 5)
-            CustomLinearProgressGradientView(progress: yearProgress, gradient: Gradient(colors: [.blue, .purple]))
-                .frame(height: 20)
-            Text(String(format: "%.8f%%", yearProgress * 100))
-                .font(.system(.title2, design: .monospaced))
-                .fontWeight(.bold)
-            Divider()
-        }
-    }
-    
-    private var dayProgressSection: some View {
-        Section {
+    private var headerSection: some View {
+        HStack(alignment: .center, spacing: 20) {
+            VStack(alignment: .leading) {
+                Text(Date(), style: .date)
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                HStack(alignment: .bottom, spacing: 4) {
+                    Text(currentTime)
+                        .font(.system(size: 45, weight: .bold, design: .monospaced))
+                    Text(seconds)
+                        .font(.system(size: 30, weight: .bold, design: .monospaced))
+                        .foregroundColor(.blue)
+                        .offset(y: -5) // 少し上に配置
+                }
+            }
+            Spacer()
             ZStack {
-                CustomCircleProgressView(progress: dayProgress, color: .blue, size: 100)
-                Text(String(format: "%.4f%%", dayProgress * 100))
+                CustomCircleProgressGradientView(progress: dayProgress, gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), size: 85)
+                Text(String(format: "%.2f%%", dayProgress * 100))
                     .font(.system(size: 20, weight: .bold))
             }
-            CustomCircleProgressGradientView(progress: dayProgress, gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), size: 100)
+        }
+        .padding()
+    }
+    
+    private var progressGrid: some View {
+        VStack(spacing: 20) {
+            progressBarSection(title: "Year Progress", progress: yearProgress, color: .blue)
+            progressBarSection(title: "Month Progress", progress: monthProgress, color: Color.blue.opacity(0.5))
         }
     }
     
-    private var monthProgressSection: some View {
-        Section {
-            CustomLinearProgressGradientView(progress: monthProgress, gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]))
-                .frame(height: 20)
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Latest Notes")
+                .font(.headline)
+                .padding(.bottom, 5)
+            
+            ForEach(latestNotes) { note in
+                VStack(alignment: .leading) {
+                    Text(note.text)
+                        .font(.body)
+                    Text(note.date.formatted())
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.white)
+                .cornerRadius(10)
+                .shadow(radius: 2)
+            }
         }
+        .padding(.horizontal)
+    }
+    
+    private func progressBarSection(title: String, progress: Double, color: Color) -> some View {
+        ZStack(alignment: .center) {
+            CustomLinearProgressGradientView(progress: progress, gradient: Gradient(colors: [color.opacity(0.5), color]))
+                .frame(height: 20)
+            Text("\(title): \(String(format: "%.2f%%", progress * 100))")
+                .font(.system(size: 14, weight: .bold, design: .default))
+                .frame(height: 20, alignment: .center)
+        }
+        .padding(.horizontal)
     }
     
     private func updateProgress() {
@@ -114,7 +129,24 @@ struct HomeView: View {
     }
     
     private func updateTime() {
-        currentTime = HomeView.timeFormatter.string(from: Date())
+        let now = Date()
+        currentTime = HomeView.timeFormatter.string(from: now)
+        seconds = HomeView.secondsFormatter.string(from: now)
     }
+    
+    private func fetchLatestNotes() {
+        // 仮のデータ取得処理
+        latestNotes = [
+            Note(id: 1, text: "Meeting with team", date: Date().addingTimeInterval(-3600)),
+            Note(id: 2, text: "Workout session", date: Date().addingTimeInterval(-7200)),
+            Note(id: 3, text: "Read a book", date: Date().addingTimeInterval(-10800))
+        ]
+    }
+}
+
+struct Note: Identifiable {
+    let id: Int
+    let text: String
+    let date: Date
 }
 

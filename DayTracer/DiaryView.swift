@@ -1,10 +1,9 @@
 //
-//  NotesView.swift
+//  DiaryView.swift
 //  DayTracer
 //
-//  Created by murate on 2023/12/02.
+//  Created by murate on 2025/02/16.
 //
-
 
 import SwiftUI
 import Firebase
@@ -21,6 +20,11 @@ extension Date {
     
     func formatted() -> String {
         return Date.shortFormatter.string(from: self)
+    }
+    
+    func isSameDay(as otherDate: Date) -> Bool {
+        let calendar = Calendar.current
+        return calendar.isDate(self, inSameDayAs: otherDate)
     }
 }
 
@@ -58,8 +62,8 @@ struct DiaryEntryView: View {
     }
 }
 
-// MARK: - Notes View
-struct NotesView: View {
+// MARK: - Diary View
+struct DiaryView: View {
     @State private var diaryEntries: [DiaryEntry] = []
     @State private var newDiaryText: String = ""
     @State private var errorMessage: String = ""
@@ -72,14 +76,21 @@ struct NotesView: View {
                     ForEach(diaryEntries) { entry in
                         DiaryEntryView(entry: entry)
                     }
-                    .onDelete(perform: deleteEntry)
+                }
+                .onTapGesture {
+                    isTextFieldFocused = false
                 }
                 
                 HStack {
-                    TextField("Type your Note...", text: $newDiaryText)
+                    TextField("Type your diary...", text: $newDiaryText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.vertical, 8)
                         .focused($isTextFieldFocused)
+                        .onChange(of: newDiaryText) { newValue in
+                            if newValue.count > 30 {
+                                newDiaryText = String(newValue.prefix(30))
+                            }
+                        }
                     
                     Button(action: addNewDiaryEntry) {
                         Text("Post")
@@ -89,7 +100,7 @@ struct NotesView: View {
                             .background(Color.blue.opacity(0.7))
                             .cornerRadius(8)
                     }
-                    .disabled(newDiaryText.isEmpty)
+                    .disabled(newDiaryText.isEmpty || hasPostedToday())
                 }
                 .padding()
                 
@@ -99,7 +110,7 @@ struct NotesView: View {
                         .padding()
                 }
             }
-            .navigationTitle("Note")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -113,7 +124,6 @@ struct NotesView: View {
         }
     }
     
-    // MARK: - CRUD Operations
     private func addNewDiaryEntry() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
@@ -132,7 +142,6 @@ struct NotesView: View {
                 let newEntry = DiaryEntry(id: newEntryRef.documentID, data: entryData)
                 if let newEntry = newEntry {
                     diaryEntries.insert(newEntry, at: 0)
-                    saveLatestDiaryEntryInSharedContainer(entry: newEntry)
                     newDiaryText = ""
                     isTextFieldFocused = false
                 }
@@ -158,25 +167,9 @@ struct NotesView: View {
             }
     }
     
-    private func deleteEntry(at offsets: IndexSet) {
-        offsets.forEach { index in
-            let entry = diaryEntries[index]
-            deleteDiaryEntry(entryId: entry.id)
-            diaryEntries.remove(at: index)
-        }
-    }
-    
-    private func deleteDiaryEntry(entryId: String) {
-        Firestore.firestore().collection("diaryEntries").document(entryId).delete { error in
-            if let error = error {
-                errorMessage = "Error deleting entry: \(error.localizedDescription)"
-            }
-        }
-    }
-    
-    private func saveLatestDiaryEntryInSharedContainer(entry: DiaryEntry) {
-        let sharedDefaults = UserDefaults(suiteName: "group.junkyfly.daytracer.notes")
-        sharedDefaults?.set(entry.text, forKey: "latestNoteText")
-        sharedDefaults?.set(entry.date.formatted(), forKey: "latestNoteDate")
+    private func hasPostedToday() -> Bool {
+        guard let latestEntry = diaryEntries.first else { return false }
+        return latestEntry.date.isSameDay(as: Date())
     }
 }
+
