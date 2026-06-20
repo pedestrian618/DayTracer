@@ -72,6 +72,21 @@ final class ProgressCalculatorsTests: XCTestCase {
         XCTAssertEqual(ProgressCalculators.calculateYearProgress(for: mid), 0.5, accuracy: 1e-6)
     }
 
+    // MARK: - Week Progress
+
+    func testWeekProgress_atStartOfWeek_isZero() {
+        let someDate = makeDate(year: 2024, month: 6, day: 12, hour: 15)
+        let interval = calendar.dateInterval(of: .weekOfYear, for: someDate)!
+        XCTAssertEqual(ProgressCalculators.calculateWeekProgress(for: interval.start), 0.0, accuracy: 1e-9)
+    }
+
+    func testWeekProgress_atMidWeek_isAboutHalf() {
+        let someDate = makeDate(year: 2024, month: 6, day: 12, hour: 15)
+        let interval = calendar.dateInterval(of: .weekOfYear, for: someDate)!
+        let mid = interval.start.addingTimeInterval(interval.duration / 2)
+        XCTAssertEqual(ProgressCalculators.calculateWeekProgress(for: mid), 0.5, accuracy: 1e-6)
+    }
+
     // MARK: - 範囲チェック
 
     func testAllProgressValues_areWithinValidRange() {
@@ -83,9 +98,11 @@ final class ProgressCalculatorsTests: XCTestCase {
         ]
         for date in samples {
             let day = ProgressCalculators.calculateDayProgress(for: date)
+            let week = ProgressCalculators.calculateWeekProgress(for: date)
             let month = ProgressCalculators.calculateMonthProgress(for: date)
             let year = ProgressCalculators.calculateYearProgress(for: date)
             XCTAssertTrue((0.0...1.0).contains(day), "day progress out of range: \(day)")
+            XCTAssertTrue((0.0...1.0).contains(week), "week progress out of range: \(week)")
             XCTAssertTrue((0.0...1.0).contains(month), "month progress out of range: \(month)")
             XCTAssertTrue((0.0...1.0).contains(year), "year progress out of range: \(year)")
         }

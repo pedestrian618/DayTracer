@@ -2,8 +2,9 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var dayProgress: Double = 0
-    @State private var yearProgress: Double = 0
+    @State private var weekProgress: Double = 0
     @State private var monthProgress: Double = 0
+    @State private var yearProgress: Double = 0
     @State private var currentTime: String = ""
     @State private var seconds: String = ""
     @State private var latestEntries: [DiaryEntry] = []
@@ -52,7 +53,7 @@ struct HomeView: View {
                 }
             }
         }
-        .background(Color.gray.opacity(0.1))
+        .background(Color(.systemGroupedBackground))
     }
 
     private var headerSection: some View {
@@ -81,8 +82,9 @@ struct HomeView: View {
 
     private var progressGrid: some View {
         VStack(spacing: 20) {
-            progressBarSection(title: "Year Progress", progress: yearProgress, color: .blue)
+            progressBarSection(title: "Week Progress", progress: weekProgress, color: Color.blue.opacity(0.75))
             progressBarSection(title: "Month Progress", progress: monthProgress, color: Color.blue.opacity(0.5))
+            progressBarSection(title: "Year Progress", progress: yearProgress, color: .blue)
         }
     }
 
@@ -108,7 +110,7 @@ struct HomeView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
+                    .background(Color(.secondarySystemGroupedBackground))
                     .cornerRadius(10)
                     .shadow(radius: 2)
                 }
@@ -131,8 +133,9 @@ struct HomeView: View {
     private func updateProgress() {
         let now = Date()
         dayProgress = ProgressCalculators.calculateDayProgress(for: now)
-        yearProgress = ProgressCalculators.calculateYearProgress(for: now)
+        weekProgress = ProgressCalculators.calculateWeekProgress(for: now)
         monthProgress = ProgressCalculators.calculateMonthProgress(for: now)
+        yearProgress = ProgressCalculators.calculateYearProgress(for: now)
     }
 
     private func updateTime() {

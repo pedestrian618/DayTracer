@@ -32,7 +32,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 ### 各画面の意図
 - **WelcomeView**: `welcomeImage` を約1.5秒表示してフェードアウトするスプラッシュ。`showWelcomeScreen` バインディングで `ContentView` に遷移。
-- **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。日進捗は円形ゲージ、年/月進捗は横バー。最新ノートは `DiaryRepository`（Firestore）から最新3件を取得して表示。
+- **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。日進捗は円形ゲージ、週/月/年進捗は横バー。最新ノートは `DiaryRepository`（Firestore）から最新3件を取得して表示。背景はシステム色でダーク/ライト両対応。
 - **NotesView**: Firestore コレクション `diaryEntries` に対して CRUD。投稿時に最新ノートを App Group の共有コンテナへ保存（ウィジェット連携用）。
 - **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。
 
@@ -62,6 +62,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - `Provider`（Timeline Provider）が毎分更新。
 - App Group 経由で最新ノートと進捗を表示。
 - 「Take Notes」ボタン（中・大）と小ウィジェットのタップで `daytracer://notes` を開き、アプリの Notes タブへ遷移（`AppRouter` + `.onOpenURL`）。
+- ロック画面ウィジェット（円形 `accessoryCircular` / 長方形 `accessoryRectangular` / インライン `accessoryInline`）に対応。日・年の進捗を表示。
 
 ---
 
@@ -70,6 +71,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 純粋な計算（副作用なし）。`Calendar.current` 基準。
 
 - `calculateDayProgress(for:)` — 当日 0:00 からの経過率。
+- `calculateWeekProgress(for:)` — 週初め（ロケール依存）からの経過率。
 - `calculateMonthProgress(for:)` — 月初からの経過率。
 - `calculateYearProgress(for:)` — 年初からの経過率。
 
@@ -124,6 +126,14 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - 修正: `AuthenticationManager` が起動時に `currentUser` から状態を即時反映するようにし、`AppDelegate` で起動時にリスナーを有効化。あわせて `googleAuth()` の強制アンラップを `guard` 化（課題 #6）。
 - 検証: 両ターゲット ビルド成功 / テスト8件合格（実機での Settings 表示は要確認）。
 
+### Quick wins（2026-06-20）
+
+- ダークモード対応: `HomeView` のノートカード/背景をシステム色（`secondarySystemGroupedBackground` / `systemGroupedBackground`）へ。白カードの浮きを解消。
+- 短い日記の制約: `NotesView` に「30文字上限」「1日1投稿（`hasPostedToday`）」＋文字数カウンタを追加（削除した `DiaryView` の意図を移植）。
+- 週進捗: `ProgressCalculators.calculateWeekProgress` を追加し、`HomeView` に Week バーを表示。テスト2件追加（計10件）。
+- ロック画面ウィジェット: 円形/長方形/インラインの3種に対応（`supportedFamilies` 拡張＋`Gauge` 表示）。
+- 検証: 両ターゲット ビルド成功 / テスト10件合格（実機での表示は要確認）。
+
 ## 8. 制約・注意点
 
 - **依存は Xcode 15.0 世代にピン留め**: Firebase 10.18.0 / GoogleSignIn 7.0.0 等。Xcode で「Update to Latest Package Versions」を実行すると Xcode 15.0 で弾かれる恐れがあるため避ける。
@@ -135,5 +145,5 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 - **保存方式の方針（要検討・本人の希望）**: 「オフラインファースト＋任意ログイン」を目指す。ログインなしでもローカルに保存して使え、ログインすればバックアップ＆複数端末同期になる構成。現状は日記が Firestore 必須（未ログインだと保存・表示できない）。ローカル層（SwiftData `Item` の活用 / App Group）＋ Firestore 同期の二層構成が候補。課題 #7 とも関連。
 - 課題 #7: ほぼ未使用の SwiftData `Item` の扱い（日記を寄せる or 削除）を決める。
-- **「短い日記」の仕様を `NotesView` に取り込む**: 削除した `DiaryView.swift`（git 履歴に残存）が持っていた「1投稿あたり30文字制限」「1日1投稿（`hasPostedToday`）」は "短い日記" というアプリの狙いに合致。`NotesView` への移植を検討。
+- ~~**「短い日記」の仕様を `NotesView` に取り込む**~~ — ✅ 2026-06-20 実装（30文字上限・1日1投稿・文字数カウンタ）。次の候補は気分（emoji）タグ・編集/検索・カレンダー表示。
 - テスト拡充: 現在は `ProgressCalculators` のみ。認証やノート CRUD は要モック設計。
