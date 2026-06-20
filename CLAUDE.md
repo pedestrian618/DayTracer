@@ -13,6 +13,20 @@ DayTracer is an iOS SwiftUI application that tracks time progress throughout the
 - **Firebase**: Authentication (Google Sign-In) and backend services
 - **App Groups**: Shared data between main app and widget extension (`group.junkyfly.daytracer.notes`)
 
+## Documentation Maintenance (IMPORTANT)
+
+- The repository keeps a living spec at `docs/overview.md` describing the app's *intent* (what/why), screen structure, data flow, and known tech debt.
+- **Whenever you change code in a way that affects behavior, screens, data model, dependencies, or known issues, update `docs/overview.md` in the same change.** Bump its "最終更新" date.
+- When you discover a new bug or design issue, add it to the "既知の課題 / 技術的負債" table in `docs/overview.md` rather than only mentioning it in chat.
+- Keep this `CLAUDE.md` in sync when the high-level architecture changes.
+
+## Testing
+
+- Unit tests live in `DayTracerTests/`. `ProgressCalculators` is covered in `DayTracerTests/DayTracerTests.swift`.
+- Run tests with: `xcodebuild test -project DayTracer.xcodeproj -scheme DayTracer -destination 'platform=iOS Simulator,name=iPhone 15'` (adjust the simulator name to one that is installed; iOS 17.0 runtime is available).
+- When adding a *new* test file, it must be added to the `DayTracerTests` target in Xcode (drag into the test target) — creating the file on disk alone will NOT register it in `project.pbxproj`, so the tests will silently not run.
+- Prefer testing pure logic (like `ProgressCalculators`). Build dates with `Calendar.current` inside tests so they are timezone-stable.
+
 ## Architecture
 
 ### Core App Structure

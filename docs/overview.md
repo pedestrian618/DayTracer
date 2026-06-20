@@ -1,0 +1,116 @@
+# DayTracer 仕様概要
+
+> このドキュメントは「コードを読めば分かること」ではなく、**何を・なぜ作っているか**（意図）を残すためのものです。
+> コードを変更したら、関連する記述をここも更新してください（運用ルールは `CLAUDE.md` 参照）。
+
+最終更新: 2026-06-20
+
+---
+
+## 1. アプリ概要
+
+DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに可視化する iOS アプリ。
+ダッシュボードに進捗バーを表示し、日記（ノート）を記録でき、ホーム画面ウィジェットでも進捗を確認できる。
+
+- 対象: iOS 17.0 以上（`IPHONEOS_DEPLOYMENT_TARGET = 17.0`）
+- 言語/UI: Swift 5 / SwiftUI
+- 開発環境: Xcode 15.0（依存は当時のバージョンにピン留め。下記「制約」参照）
+
+---
+
+## 2. 画面構成
+
+起動フロー: `DayTracerApp` → `WelcomeView`（スプラッシュ）→ `ContentView`（タブ）
+
+`ContentView` は3タブの `TabView`:
+
+| タブ | View | 役割 |
+|---|---|---|
+| Home | `HomeView` | 日付・現在時刻、日/月/年の進捗、最新ノート一覧 |
+| Notes | `NotesView` | 日記の閲覧・投稿・削除（Firestore 連携） |
+| Settings | `SettingsView` | サインイン状態の表示、Google サインイン / サインアウト |
+
+### 各画面の意図
+- **WelcomeView**: `welcomeImage` を約1.5秒表示してフェードアウトするスプラッシュ。`showWelcomeScreen` バインディングで `ContentView` に遷移。
+- **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。日進捗は円形ゲージ、年/月進捗は横バー。
+- **NotesView**: Firestore コレクション `diaryEntries` に対して CRUD。投稿時に最新ノートを App Group の共有コンテナへ保存（ウィジェット連携用）。
+- **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。
+
+---
+
+## 3. データと永続化
+
+3系統が混在している（歴史的経緯）:
+
+1. **SwiftData (`Item`)** — `DayTracerApp` で `ModelContainer` を構築。スキーマは `Item`（`timestamp: Date`）のみ。**現状ほぼ未使用**（プレビューと初期テンプレートの名残）。
+2. **Firestore (`diaryEntries`)** — 日記の本体。`{ text, date: Timestamp, userId }`。`userId` で絞り込み、`date` 降順で取得。
+3. **App Group 共有 UserDefaults** — `group.junkyfly.daytracer.notes`。キー `latestNoteText` / `latestNoteDate` に最新ノートを保存し、ウィジェットへ受け渡す。
+
+---
+
+## 4. 認証
+
+- `AuthenticationManager`（シングルトン, `ObservableObject`）が Firebase Auth の状態を保持。
+- Google サインイン（`GoogleSignIn`）→ Firebase クレデンシャルに変換してログイン。
+- `AppDelegate` で `FirebaseApp.configure()` と URL ハンドリング。
+
+---
+
+## 5. ウィジェット
+
+- 別ターゲット `DayTracerWidgets/`。小・中・大の3サイズ。
+- `Provider`（Timeline Provider）が毎分更新。
+- App Group 経由で最新ノートと進捗を表示。
+
+---
+
+## 6. 進捗計算ロジック（`ProgressCalculators`）
+
+純粋な計算（副作用なし）。`Calendar.current` 基準。
+
+- `calculateDayProgress(for:)` — 当日 0:00 からの経過率。
+- `calculateMonthProgress(for:)` — 月初からの経過率。
+- `calculateYearProgress(for:)` — 年初からの経過率。
+
+戻り値は基本 0.0〜1.0。**テスト対象**（`DayTracerTests`）。
+
+---
+
+## 7. 既知の課題 / 技術的負債
+
+> 2026-06-20 時点でコードを精査して確認した内容。優先度は目安。
+
+| # | 内容 | 影響 | 優先度 |
+|---|---|---|---|
+| 1 | ~~**`DiaryView.swift` が孤立**~~ — ✅ Phase 1（2026-06-20）で削除済。「短い日記」向けロジックは下記 §9 に記録。 | 混乱の元。死にコード | ✅ 解消 |
+| 2 | **HomeView の「Latest Notes」がモック** — `fetchLatestNotes()` がハードコードの `Note` 配列を返すだけで、実データ（Firestore / 共有コンテナ）を読んでいない。 | 表示が常にダミー | 高 |
+| 3 | **ノートのモデルが2系統** — `Note`（HomeView, `Int` id, ローカル）と `DiaryEntry`（NotesView, `String` id, Firestore）が未統一。 | 整合性・保守性 | 中 |
+| 4 | **WelcomeView が毎起動で表示** — `showWelcomeScreen` が `@State` 初期値 `true` で永続化なし。スプラッシュとしては許容だが意図の明確化が必要。 | 仕様判断待ち | 低 |
+| 5 | ~~**コメントアウト済みの旧コード**~~ — ✅ Phase 1 で除去済（ContentView/DayTracerApp/Widgets/AppIntent ほか）。 | 可読性 | ✅ 解消 |
+| 6 | **強制アンラップ** が `AuthenticationManager.googleAuth()` に複数（`windows.first!`, `rootViewController!`）。 | クラッシュ要因 | 中 |
+| 7 | **SwiftData(`Item`) がほぼ未使用** — 役割が定まっていない。日記を SwiftData に寄せるか、削除するか要判断。 | 設計の宙ぶらりん | 中 |
+
+---
+
+## 7.5 整理ログ（Phase 1 / 2026-06-20）
+
+リスクゼロの掃除を実施（アプリ・ウィジェット両ターゲットのビルド成功＋テスト合格を確認）:
+
+- 削除: `DiaryView.swift`（孤立・ビルド対象外）、`SwiftUIView.swift`（"Hello, World!" の雛形）
+- 削除: 未使用の `CustomLinearProgressView` / `CustomCircleProgressView`（非グラデ版、参照ゼロ）
+- 除去: `ContentView` / `DayTracerApp` / `DayTracerWidgets` / `AppIntent` / Medium・Large View のコメントアウト済み旧コード、重複ヘッダ、未使用変数 `currentMonth`
+
+→ 課題 #1・#5 は解消。残る依存集約（App Group 定数・ノート保存の共通化＝Phase 2）は未着手。
+
+## 8. 制約・注意点
+
+- **依存は Xcode 15.0 世代にピン留め**: Firebase 10.18.0 / GoogleSignIn 7.0.0 等。Xcode で「Update to Latest Package Versions」を実行すると Xcode 15.0 で弾かれる恐れがあるため避ける。
+- リンカ警告 `ignoring duplicate libraries: '-lc++', '-lsqlite3', '-lz'` は Xcode 15 + SPM の既知の無害な警告。
+
+---
+
+## 9. 今後の改善候補（メモ）
+
+- 課題 #2/#3: HomeView の最新ノートを実データ化し、ノートモデルを `DiaryEntry` に統一。
+- **「短い日記」の仕様を `NotesView` に取り込む**: 削除した `DiaryView.swift`（git 履歴に残存）が持っていた「1投稿あたり30文字制限」「1日1投稿（`hasPostedToday`）」は "短い日記" というアプリの狙いに合致。`NotesView` への移植を検討。
+- テスト拡充: 現在は `ProgressCalculators` のみ。認証やノート CRUD は要モック設計。

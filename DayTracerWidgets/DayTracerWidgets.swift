@@ -9,7 +9,7 @@ import WidgetKit
 import SwiftUI
 
 struct Provider: AppIntentTimelineProvider {
-    
+
     // 共有 UserDefaults から最新のノートを取得するためのヘルパー関数
     func getLatestNote() -> (text: String, date: String) {
         let sharedDefaults = UserDefaults(suiteName: "group.junkyfly.daytracer.notes")
@@ -17,31 +17,26 @@ struct Provider: AppIntentTimelineProvider {
         let date = sharedDefaults?.string(forKey: "latestNoteDate") ?? ""
         return (text, date)
     }
-    
-    // Providerの関数では、SimpleEntryの新しいイニシャライザを使用します。
+
     func placeholder(in context: Context) -> SimpleEntry {
         let (noteText, noteDate) = getLatestNote()
         return SimpleEntry(date: Date(), selectedColor: .blue, selectedSubColor: .blue, latestNoteText: noteText, latestNoteDate: noteDate)
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        // ColorSettings
         let selectedColor = getColor(from: configuration.selectedColor)
         let selectedSubColor = getColor(from: configuration.selectedSubColor)
         let (noteText, noteDate) = getLatestNote()
         return SimpleEntry(date: Date(), selectedColor: selectedColor, selectedSubColor: selectedSubColor, latestNoteText: noteText, latestNoteDate: noteDate)
     }
-    
-    // Providerのtimelineメソッド内でSimpleEntryを作成する際に、yearProgressも計算して初期化します。
+
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
         var entries: [SimpleEntry] = []
 
         let currentDate = Date()
         let calendar = Calendar.current
-        // let currentMinute = calendar.component(.minute, from: currentDate)
         let currentSecond = calendar.component(.second, from: currentDate)
-        
-        // ColorSettings
+
         let selectedColor = getColor(from: configuration.selectedColor)
         let selectedSubColor = getColor(from: configuration.selectedSubColor)
 
@@ -50,16 +45,17 @@ struct Provider: AppIntentTimelineProvider {
 
         for minuteOffset in 0..<15 {
             if let entryDate = calendar.date(byAdding: .second, value: secondsUntilNextMinute + (minuteOffset * 60), to: currentDate) {
-                            let (noteText, noteDate) = getLatestNote()
-                            let entry = SimpleEntry(date: entryDate, selectedColor: selectedColor, selectedSubColor: selectedSubColor, latestNoteText: noteText, latestNoteDate: noteDate)
-                            entries.append(entry)
-                        }
+                let (noteText, noteDate) = getLatestNote()
+                let entry = SimpleEntry(date: entryDate, selectedColor: selectedColor, selectedSubColor: selectedSubColor, latestNoteText: noteText, latestNoteDate: noteDate)
+                entries.append(entry)
             }
+        }
 
         // 最初のエントリーが現在時刻の次の分から始まるように設定
         return Timeline(entries: entries, policy: .after(entries.first?.date ?? currentDate))
     }
-    // ColorOption enumをColorに変換するためのヘルパー関数
+
+    // ColorOption enum を Color に変換するためのヘルパー関数
     func getColor(from colorOption: ColorOption) -> Color {
         switch colorOption {
         case .red:
@@ -86,21 +82,20 @@ struct SimpleEntry: TimelineEntry {
     let latestNoteText: String
     let latestNoteDate: String
 
-    // 日付を基にしてイニシャライザ内で年間の進捗を計算する
-    init(date: Date, selectedColor: Color, selectedSubColor:Color, latestNoteText: String, latestNoteDate: String) {
-            self.date = date
-            self.yearProgress = ProgressCalculators.calculateYearProgress(for: date)
-            self.dayProgress = ProgressCalculators.calculateDayProgress(for: date)
-            self.monthProgress=ProgressCalculators.calculateMonthProgress(for: date)
-            self.selectedColor = selectedColor
-            self.selectedSubColor = selectedSubColor
-            self.latestNoteText = latestNoteText
-            self.latestNoteDate = latestNoteDate
+    // 日付を基にしてイニシャライザ内で各種進捗を計算する
+    init(date: Date, selectedColor: Color, selectedSubColor: Color, latestNoteText: String, latestNoteDate: String) {
+        self.date = date
+        self.yearProgress = ProgressCalculators.calculateYearProgress(for: date)
+        self.dayProgress = ProgressCalculators.calculateDayProgress(for: date)
+        self.monthProgress = ProgressCalculators.calculateMonthProgress(for: date)
+        self.selectedColor = selectedColor
+        self.selectedSubColor = selectedSubColor
+        self.latestNoteText = latestNoteText
+        self.latestNoteDate = latestNoteDate
     }
 }
 
-
-struct DayTracerWidgetsEntryView : View {
+struct DayTracerWidgetsEntryView: View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) var widgetFamily
 
@@ -115,15 +110,6 @@ struct DayTracerWidgetsEntryView : View {
         default:
             DayTracerWidgetsSmallView(entry: entry)
         }
-//        VStack {
-//            Text("Time:")
-//            Text(entry.date, style: .time)
-//            
-//            Text("Year Progress:")
-//            ProgressView(value: entry.yearProgress)
-//                .progressViewStyle(LinearProgressViewStyle())
-//                .scaleEffect(x: 1, y: 2, anchor: .center) // オプションでプログレスバーのスタイルを調整
-//        }
     }
 }
 
@@ -138,26 +124,9 @@ struct DayTracerWidgets: Widget {
     }
 }
 
-
-
-
-//extension ConfigurationAppIntent {
-//    fileprivate static var smiley: ConfigurationAppIntent {
-//        let intent = ConfigurationAppIntent()
-//        intent.favoriteEmoji = "😀"
-//        return intent
-//    }
-//    
-//    fileprivate static var starEyes: ConfigurationAppIntent {
-//        let intent = ConfigurationAppIntent()
-//        intent.favoriteEmoji = "🤩"
-//        return intent
-//    }
-//}
-
 #Preview(as: .systemSmall) {
     DayTracerWidgets()
 } timeline: {
-    SimpleEntry(date: .now, selectedColor: .blue, selectedSubColor:.blue,latestNoteText: "Sample Note Text 1", latestNoteDate: "12/12/2023")
-    SimpleEntry(date: .now, selectedColor: .green, selectedSubColor:.blue,latestNoteText: "Sample Note Text 2", latestNoteDate: "12/12/2023")
+    SimpleEntry(date: .now, selectedColor: .blue, selectedSubColor: .blue, latestNoteText: "Sample Note Text 1", latestNoteDate: "12/12/2023")
+    SimpleEntry(date: .now, selectedColor: .green, selectedSubColor: .blue, latestNoteText: "Sample Note Text 2", latestNoteDate: "12/12/2023")
 }
