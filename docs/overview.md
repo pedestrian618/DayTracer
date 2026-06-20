@@ -88,8 +88,9 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 | 3 | ~~**ノートのモデルが2系統**~~ — ✅ Phase 3 で `Note`（モック）を廃止し `DiaryEntry` に一本化。 | 整合性・保守性 | ✅ 解消 |
 | 4 | **WelcomeView が毎起動で表示** — `showWelcomeScreen` が `@State` 初期値 `true` で永続化なし。スプラッシュとしては許容だが意図の明確化が必要。 | 仕様判断待ち | 低 |
 | 5 | ~~**コメントアウト済みの旧コード**~~ — ✅ Phase 1 で除去済（ContentView/DayTracerApp/Widgets/AppIntent ほか）。 | 可読性 | ✅ 解消 |
-| 6 | **強制アンラップ** が `AuthenticationManager.googleAuth()` に複数（`windows.first!`, `rootViewController!`）。 | クラッシュ要因 | 中 |
+| 6 | ~~**強制アンラップ** が `AuthenticationManager.googleAuth()`~~ — ✅ 2026-06-20 に `windows.first!`/`rootViewController!` を `guard` 化。 | クラッシュ要因 | ✅ 解消 |
 | 7 | **SwiftData(`Item`) がほぼ未使用** — 役割が定まっていない。日記を SwiftData に寄せるか、削除するか要判断。 | 設計の宙ぶらりん | 中 |
+| 8 | ~~**Settings がログイン済みでも「Sign in to continue」表示**~~ — ✅ 2026-06-20 解消。認証状態のソースが2系統に分かれていた（Notes/Home は `currentUser` 直接、Settings は別フラグ）。`AuthenticationManager` を起動時に `currentUser` から即時反映するよう修正。 | サインイン状態の誤表示 | ✅ 解消 |
 
 ---
 
@@ -116,6 +117,13 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - LiveActivity 削除: 未使用の絵文字テンプレ（`DayTracerWidgetsLiveActivity.swift`）をファイル・pbxproj・`WidgetBundle` 登録ごと削除。
 - 検証: 両ターゲット ビルド成功 / テスト8件合格（実行時のタップ遷移・Firestore 取得は要シミュレータ確認）。
 
+### 認証状態の修正（2026-06-20）
+
+- 症状: Firestore のノートは読めている（＝ Firebase 的にはサインイン済み）のに、Settings は「Sign in to continue」のまま。
+- 原因: 認証状態のソースが2系統 —— Notes/Home は `Auth.auth().currentUser` を直接参照、Settings は別フラグ `AuthenticationManager.isSignedIn` を参照しており、後者が実態と同期しきれていなかった。
+- 修正: `AuthenticationManager` が起動時に `currentUser` から状態を即時反映するようにし、`AppDelegate` で起動時にリスナーを有効化。あわせて `googleAuth()` の強制アンラップを `guard` 化（課題 #6）。
+- 検証: 両ターゲット ビルド成功 / テスト8件合格（実機での Settings 表示は要確認）。
+
 ## 8. 制約・注意点
 
 - **依存は Xcode 15.0 世代にピン留め**: Firebase 10.18.0 / GoogleSignIn 7.0.0 等。Xcode で「Update to Latest Package Versions」を実行すると Xcode 15.0 で弾かれる恐れがあるため避ける。
@@ -125,6 +133,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 ## 9. 今後の改善候補（メモ）
 
+- **保存方式の方針（要検討・本人の希望）**: 「オフラインファースト＋任意ログイン」を目指す。ログインなしでもローカルに保存して使え、ログインすればバックアップ＆複数端末同期になる構成。現状は日記が Firestore 必須（未ログインだと保存・表示できない）。ローカル層（SwiftData `Item` の活用 / App Group）＋ Firestore 同期の二層構成が候補。課題 #7 とも関連。
 - 課題 #7: ほぼ未使用の SwiftData `Item` の扱い（日記を寄せる or 削除）を決める。
 - **「短い日記」の仕様を `NotesView` に取り込む**: 削除した `DiaryView.swift`（git 履歴に残存）が持っていた「1投稿あたり30文字制限」「1日1投稿（`hasPostedToday`）」は "短い日記" というアプリの狙いに合致。`NotesView` への移植を検討。
 - テスト拡充: 現在は `ProgressCalculators` のみ。認証やノート CRUD は要モック設計。
