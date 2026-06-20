@@ -109,10 +109,11 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - 差し替え: `NotesView`（書く側）と `Provider`（読む側）のベタ書き `UserDefaults` アクセスを共有コードに統一。文字列の二重管理を解消。
 - 検証: 両ターゲット ビルド成功 / テスト8件合格。
 
-### Phase 3（一部）: 機能のつながり（2026-06-20）
+### Phase 3: 機能のつながり（2026-06-20）
 
 - ディープリンク: ウィジェットの「Take Notes」/ 小ウィジェットのタップ → `daytracer://notes` → Notes タブへ。`AppRouter`（新規）と `DayTracerApp.onOpenURL`、各ウィジェットの `Link` / `.widgetURL` で実現（URLスキームは Info.plist に登録済みだった）。
 - HomeView 実データ化: モックの `Note` を廃止し、`DiaryRepository`（新規・Firestore アクセス集約）で最新3件を表示。`NotesView` の一覧取得も同リポジトリに統一。
+- LiveActivity 削除: 未使用の絵文字テンプレ（`DayTracerWidgetsLiveActivity.swift`）をファイル・pbxproj・`WidgetBundle` 登録ごと削除。
 - 検証: 両ターゲット ビルド成功 / テスト8件合格（実行時のタップ遷移・Firestore 取得は要シミュレータ確認）。
 
 ## 8. 制約・注意点
@@ -124,6 +125,6 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 ## 9. 今後の改善候補（メモ）
 
-- 課題（残 Phase 3）: `LiveActivity`（絵文字テンプレ）の削除 or 実装を判断する。
+- 課題 #7: ほぼ未使用の SwiftData `Item` の扱い（日記を寄せる or 削除）を決める。
 - **「短い日記」の仕様を `NotesView` に取り込む**: 削除した `DiaryView.swift`（git 履歴に残存）が持っていた「1投稿あたり30文字制限」「1日1投稿（`hasPostedToday`）」は "短い日記" というアプリの狙いに合致。`NotesView` への移植を検討。
 - テスト拡充: 現在は `ProgressCalculators` のみ。認証やノート CRUD は要モック設計。

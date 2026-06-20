@@ -14,6 +14,7 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 - **詳細**:
   - `AppRouter`（タブ選択を保持）を追加し、`DayTracerApp` の `.onOpenURL` で `daytracer://notes` を Notes タブへ。ウィジェットは「Take Notes」を `Link`、小サイズに `.widgetURL` を付与（URLスキームは Info.plist に登録済みだった）。
   - `DiaryRepository`（Firestore アクセス集約）を新規作成しアプリターゲットに登録。`HomeView` のモック `Note` を廃止し最新3件を実データ表示。`NotesView` の一覧取得も同リポジトリに統一。
+  - 未使用の `LiveActivity`（絵文字テンプレ）を削除（ファイル・pbxproj・`WidgetBundle` 登録）。
 - **検証**: 両ターゲット ビルド成功 / `ProgressCalculatorsTests` 8件合格。実行時の挙動（タップ遷移・Firestore 取得）は要シミュレータ確認。
 - **コミット**: （このエントリと同じコミット）
 
@@ -49,6 +50,6 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 - 最新化は保留（Xcode 16.4 は macOS Sequoia 必須、現状は Sonoma 14.6.1）。SPM の「Update to Latest」は実行しないこと。
 
 ### 次の予定
-- **残 Phase 3**: `LiveActivity`（絵文字テンプレ）の削除 or 実装の判断。
 - **任意**: 削除済み `DiaryView` が持っていた「30文字制限・1日1投稿」を `NotesView` へ移植（短い日記の強化）。
+- **任意**: ほぼ未使用の SwiftData `Item` の扱いを決める（課題 #7）。
 - 実機/シミュレータで、ディープリンク遷移と HomeView の実データ表示を動作確認。

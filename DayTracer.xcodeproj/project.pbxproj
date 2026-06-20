@@ -36,7 +36,6 @@
 		F3E74A342B1B373F00902D64 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E74A332B1B373F00902D64 /* WidgetKit.framework */; };
 		F3E74A362B1B373F00902D64 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E74A352B1B373F00902D64 /* SwiftUI.framework */; };
 		F3E74A392B1B373F00902D64 /* DayTracerWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */; };
-		F3E74A3B2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */; };
 		F3E74A3D2B1B373F00902D64 /* DayTracerWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */; };
 		F3E74A3F2B1B373F00902D64 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3E2B1B373F00902D64 /* AppIntent.swift */; };
 		F3E74A412B1B374000902D64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3E74A402B1B374000902D64 /* Assets.xcassets */; };
@@ -118,7 +117,6 @@
 		F3E74A332B1B373F00902D64 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		F3E74A352B1B373F00902D64 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsBundle.swift; sourceTree = "<group>"; };
-		F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsLiveActivity.swift; sourceTree = "<group>"; };
 		F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgets.swift; sourceTree = "<group>"; };
 		F3E74A3E2B1B373F00902D64 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
 		F3E74A402B1B374000902D64 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -258,7 +256,6 @@
 			isa = PBXGroup;
 			children = (
 				F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */,
-				F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */,
 				F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */,
 				F31316B02B25541A001087B7 /* DayTracerWidgetsSmallView.swift */,
 				F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */,
@@ -482,7 +479,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3E74A3B2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift in Sources */,
 				F31316B72B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift in Sources */,
 				F31316B52B25BCB5001087B7 /* ProgressViews.swift in Sources */,
 				F3E74A3F2B1B373F00902D64 /* AppIntent.swift in Sources */,

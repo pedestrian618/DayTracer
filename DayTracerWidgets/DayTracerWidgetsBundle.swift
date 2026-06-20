@@ -12,6 +12,5 @@ import SwiftUI
 struct DayTracerWidgetsBundle: WidgetBundle {
     var body: some Widget {
         DayTracerWidgets()
-        DayTracerWidgetsLiveActivity()
     }
 }
