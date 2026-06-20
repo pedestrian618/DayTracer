@@ -175,8 +175,6 @@ struct NotesView: View {
     }
     
     private func saveLatestDiaryEntryInSharedContainer(entry: DiaryEntry) {
-        let sharedDefaults = UserDefaults(suiteName: "group.junkyfly.daytracer.notes")
-        sharedDefaults?.set(entry.text, forKey: "latestNoteText")
-        sharedDefaults?.set(entry.date.formatted(), forKey: "latestNoteDate")
+        SharedNoteStore().saveLatestNote(text: entry.text, date: entry.date.formatted())
     }
 }

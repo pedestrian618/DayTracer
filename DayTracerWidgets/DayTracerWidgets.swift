@@ -10,12 +10,9 @@ import SwiftUI
 
 struct Provider: AppIntentTimelineProvider {
 
-    // 共有 UserDefaults から最新のノートを取得するためのヘルパー関数
+    // 共有コンテナ（App Group）から最新のノートを取得する
     func getLatestNote() -> (text: String, date: String) {
-        let sharedDefaults = UserDefaults(suiteName: "group.junkyfly.daytracer.notes")
-        let text = sharedDefaults?.string(forKey: "latestNoteText") ?? "No Note.Let’s take your diary"
-        let date = sharedDefaults?.string(forKey: "latestNoteDate") ?? ""
-        return (text, date)
+        return SharedNoteStore().loadLatestNote()
     }
 
     func placeholder(in context: Context) -> SimpleEntry {

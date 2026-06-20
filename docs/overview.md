@@ -44,7 +44,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 1. **SwiftData (`Item`)** — `DayTracerApp` で `ModelContainer` を構築。スキーマは `Item`（`timestamp: Date`）のみ。**現状ほぼ未使用**（プレビューと初期テンプレートの名残）。
 2. **Firestore (`diaryEntries`)** — 日記の本体。`{ text, date: Timestamp, userId }`。`userId` で絞り込み、`date` 降順で取得。
-3. **App Group 共有 UserDefaults** — `group.junkyfly.daytracer.notes`。キー `latestNoteText` / `latestNoteDate` に最新ノートを保存し、ウィジェットへ受け渡す。
+3. **App Group 共有 UserDefaults** — `group.junkyfly.daytracer.notes`。キー `latestNoteText` / `latestNoteDate` に最新ノートを保存し、ウィジェットへ受け渡す。**アクセスは `SharedConfig`（suite 名・キー名）と `SharedNoteStore`（read/write）に集約**され、アプリ・ウィジェット両ターゲットで共有（Phase 2）。
 
 ---
 
@@ -100,7 +100,13 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - 削除: 未使用の `CustomLinearProgressView` / `CustomCircleProgressView`（非グラデ版、参照ゼロ）
 - 除去: `ContentView` / `DayTracerApp` / `DayTracerWidgets` / `AppIntent` / Medium・Large View のコメントアウト済み旧コード、重複ヘッダ、未使用変数 `currentMonth`
 
-→ 課題 #1・#5 は解消。残る依存集約（App Group 定数・ノート保存の共通化＝Phase 2）は未着手。
+→ 課題 #1・#5 は解消。
+
+### Phase 2: 依存の集約（2026-06-20）
+
+- 新規: `SharedConfig.swift`（App Group の suite 名・キー名を集約）、`SharedNoteStore.swift`（最新ノートの read/write をラップ）。`project.pbxproj` を編集し、アプリ・ウィジェット両ターゲットに登録。
+- 差し替え: `NotesView`（書く側）と `Provider`（読む側）のベタ書き `UserDefaults` アクセスを共有コードに統一。文字列の二重管理を解消。
+- 検証: 両ターゲット ビルド成功 / テスト8件合格。
 
 ## 8. 制約・注意点
 
