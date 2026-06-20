@@ -9,6 +9,14 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 
 ## 2026-06-20
 
+### Phase 3（一部）: 機能のつながり（ディープリンク・実データ化）
+- **概要**: ウィジェット→アプリのディープリンクと、HomeView のモック→実データ化。
+- **詳細**:
+  - `AppRouter`（タブ選択を保持）を追加し、`DayTracerApp` の `.onOpenURL` で `daytracer://notes` を Notes タブへ。ウィジェットは「Take Notes」を `Link`、小サイズに `.widgetURL` を付与（URLスキームは Info.plist に登録済みだった）。
+  - `DiaryRepository`（Firestore アクセス集約）を新規作成しアプリターゲットに登録。`HomeView` のモック `Note` を廃止し最新3件を実データ表示。`NotesView` の一覧取得も同リポジトリに統一。
+- **検証**: 両ターゲット ビルド成功 / `ProgressCalculatorsTests` 8件合格。実行時の挙動（タップ遷移・Firestore 取得）は要シミュレータ確認。
+- **コミット**: （このエントリと同じコミット）
+
 ### Phase 2: 依存の集約（App Group 共通化）
 - **概要**: 散らばっていた App Group の文字列を1箇所に集約し、アプリ↔ウィジェットの結合を明確化。
 - **詳細**:
@@ -41,4 +49,6 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 - 最新化は保留（Xcode 16.4 は macOS Sequoia 必須、現状は Sonoma 14.6.1）。SPM の「Update to Latest」は実行しないこと。
 
 ### 次の予定
-- **Phase 3（任意）**: ウィジェットの「Take Notes」ディープリンク（`daytracer://notes`）復活、`HomeView` の最新ノートのモック→実データ化、`LiveActivity`（絵文字テンプレ）の削除/実装判断。
+- **残 Phase 3**: `LiveActivity`（絵文字テンプレ）の削除 or 実装の判断。
+- **任意**: 削除済み `DiaryView` が持っていた「30文字制限・1日1投稿」を `NotesView` へ移植（短い日記の強化）。
+- 実機/シミュレータで、ディープリンク遷移と HomeView の実データ表示を動作確認。

@@ -25,6 +25,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct DayTracerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var router = AppRouter()
     @State private var showWelcomeScreen = true
 
     var sharedModelContainer: ModelContainer = {
@@ -42,11 +43,27 @@ struct DayTracerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if showWelcomeScreen {
-                WelcomeView(showWelcomeScreen: $showWelcomeScreen)
-            } else {
-                ContentView()
+            Group {
+                if showWelcomeScreen {
+                    WelcomeView(showWelcomeScreen: $showWelcomeScreen)
+                } else {
+                    ContentView()
+                }
             }
+            .environmentObject(router)
+            .onOpenURL { url in
+                handleDeepLink(url)
+            }
+        }
+    }
+
+    /// ウィジェット等からの daytracer://notes を受けて Notes タブを開く。
+    /// （Google サインインのコールバックは AppDelegate 側で処理されるため scheme で振り分ける）
+    private func handleDeepLink(_ url: URL) {
+        guard url.scheme == "daytracer" else { return }
+        if url.host == "notes" {
+            showWelcomeScreen = false
+            router.selectedTab = .notes
         }
     }
 }

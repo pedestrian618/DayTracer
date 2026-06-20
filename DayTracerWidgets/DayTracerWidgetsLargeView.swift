@@ -68,10 +68,8 @@ struct DayTracerWidgetsLargeView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
 
-            // ノートを取るためのボタン
-            Button(action: {
-                // ノートビューへのアクションを追加
-            }) {
+            // ノートを取るためのボタン（タップで Notes タブを開く）
+            Link(destination: URL(string: "daytracer://notes")!) {
                 HStack {
                     Image(systemName: "pencil")
                         .foregroundColor(Color(UIColor.secondaryLabel))

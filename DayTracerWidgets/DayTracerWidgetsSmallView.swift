@@ -33,5 +33,6 @@ struct DayTracerWidgetsSmallView: View {
             
         }
         .padding()
+        .widgetURL(URL(string: "daytracer://notes"))
     }
 }

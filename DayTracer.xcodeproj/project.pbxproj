@@ -17,6 +17,7 @@
 		F31316B72B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */; };
 		F31316B92B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */; };
 		F31316BB2B25D270001087B7 /* ProgressCalculators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316BA2B25D270001087B7 /* ProgressCalculators.swift */; };
+		AEE63EB4A3A543ACBF89250F /* DiaryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBAB7C133A54481BBEF56B8 /* DiaryRepository.swift */; };
 		F31316BC2B25D270001087B7 /* ProgressCalculators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316BA2B25D270001087B7 /* ProgressCalculators.swift */; };
 		7FE694AD2CE043D9A0B1021A /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8C3A00860046538AB72880 /* SharedConfig.swift */; };
 		24E07C6FF7D443AF88D5BB37 /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8C3A00860046538AB72880 /* SharedConfig.swift */; };
@@ -95,6 +96,7 @@
 		F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsMediumView.swift; sourceTree = "<group>"; };
 		F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsLargeView.swift; sourceTree = "<group>"; };
 		F31316BA2B25D270001087B7 /* ProgressCalculators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCalculators.swift; sourceTree = "<group>"; };
+		EFBAB7C133A54481BBEF56B8 /* DiaryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryRepository.swift; sourceTree = "<group>"; };
 		9F8C3A00860046538AB72880 /* SharedConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfig.swift; sourceTree = "<group>"; };
 		CFC1AF0E47374C22B5793CAD /* SharedNoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedNoteStore.swift; sourceTree = "<group>"; };
 		F3A2B9B82B1B302E005201B4 /* DayTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -200,6 +202,7 @@
 				F3A2B9BD2B1B302E005201B4 /* ContentView.swift */,
 				F31316B32B25BCB5001087B7 /* ProgressViews.swift */,
 				F31316BA2B25D270001087B7 /* ProgressCalculators.swift */,
+				EFBAB7C133A54481BBEF56B8 /* DiaryRepository.swift */,
 				9F8C3A00860046538AB72880 /* SharedConfig.swift */,
 				CFC1AF0E47374C22B5793CAD /* SharedNoteStore.swift */,
 				F31316A72B1C3C92001087B7 /* WelcomeView.swift */,
@@ -447,6 +450,7 @@
 				F3A2B9EA2B1B305D005201B4 /* HomeView.swift in Sources */,
 				F3A2B9EC2B1B308B005201B4 /* NotesView.swift in Sources */,
 				F31316BB2B25D270001087B7 /* ProgressCalculators.swift in Sources */,
+				AEE63EB4A3A543ACBF89250F /* DiaryRepository.swift in Sources */,
 				7FE694AD2CE043D9A0B1021A /* SharedConfig.swift in Sources */,
 				330A4D9D4413452B8D2ACDDB /* SharedNoteStore.swift in Sources */,
 				F31316B42B25BCB5001087B7 /* ProgressViews.swift in Sources */,

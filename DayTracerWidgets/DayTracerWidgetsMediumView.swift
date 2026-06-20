@@ -24,9 +24,8 @@ struct DayTracerWidgetsMediumView: View {
                         .font(.system(size: 18, weight: .regular, design: .default))
                         .padding(.leading, 20)
 
-                    // ノートを取るためのボタン
-                    Button(action: {
-                    }) {
+                    // ノートを取るためのボタン（タップで Notes タブを開く）
+                    Link(destination: URL(string: "daytracer://notes")!) {
                         HStack {
                             Image(systemName: "pencil")
                                 .foregroundColor(Color(UIColor.secondaryLabel))

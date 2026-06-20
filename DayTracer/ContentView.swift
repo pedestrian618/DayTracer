@@ -8,7 +8,15 @@
 import SwiftUI
 import SwiftData
 
+/// アプリ内のタブ遷移を司るルーター。ディープリンク（daytracer://notes）からも操作する。
+final class AppRouter: ObservableObject {
+    enum Tab: Hashable { case home, notes, settings }
+    @Published var selectedTab: Tab = .home
+}
+
 struct ContentView: View {
+    @EnvironmentObject private var router: AppRouter
+
     init() {
         // Customizing navigation and tab bars to match the blue theme of the app icon
         let appearance = UINavigationBarAppearance()
@@ -29,26 +37,30 @@ struct ContentView: View {
     }
 
     var body: some View {
-        TabView {
+        TabView(selection: $router.selectedTab) {
             HomeView()
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
+                .tag(AppRouter.Tab.home)
 
             NotesView()
                 .tabItem {
                     Label("Notes", systemImage: "book")
                 }
+                .tag(AppRouter.Tab.notes)
 
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
+                .tag(AppRouter.Tab.settings)
         }
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(AppRouter())
         .modelContainer(for: Item.self, inMemory: true)
 }

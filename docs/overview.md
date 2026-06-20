@@ -32,7 +32,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 ### 各画面の意図
 - **WelcomeView**: `welcomeImage` を約1.5秒表示してフェードアウトするスプラッシュ。`showWelcomeScreen` バインディングで `ContentView` に遷移。
-- **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。日進捗は円形ゲージ、年/月進捗は横バー。
+- **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。日進捗は円形ゲージ、年/月進捗は横バー。最新ノートは `DiaryRepository`（Firestore）から最新3件を取得して表示。
 - **NotesView**: Firestore コレクション `diaryEntries` に対して CRUD。投稿時に最新ノートを App Group の共有コンテナへ保存（ウィジェット連携用）。
 - **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。
 
@@ -61,6 +61,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - 別ターゲット `DayTracerWidgets/`。小・中・大の3サイズ。
 - `Provider`（Timeline Provider）が毎分更新。
 - App Group 経由で最新ノートと進捗を表示。
+- 「Take Notes」ボタン（中・大）と小ウィジェットのタップで `daytracer://notes` を開き、アプリの Notes タブへ遷移（`AppRouter` + `.onOpenURL`）。
 
 ---
 
@@ -83,8 +84,8 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 | # | 内容 | 影響 | 優先度 |
 |---|---|---|---|
 | 1 | ~~**`DiaryView.swift` が孤立**~~ — ✅ Phase 1（2026-06-20）で削除済。「短い日記」向けロジックは下記 §9 に記録。 | 混乱の元。死にコード | ✅ 解消 |
-| 2 | **HomeView の「Latest Notes」がモック** — `fetchLatestNotes()` がハードコードの `Note` 配列を返すだけで、実データ（Firestore / 共有コンテナ）を読んでいない。 | 表示が常にダミー | 高 |
-| 3 | **ノートのモデルが2系統** — `Note`（HomeView, `Int` id, ローカル）と `DiaryEntry`（NotesView, `String` id, Firestore）が未統一。 | 整合性・保守性 | 中 |
+| 2 | ~~**HomeView の「Latest Notes」がモック**~~ — ✅ Phase 3 で実データ化。`DiaryRepository` 経由で Firestore から最新3件を取得。 | 表示が常にダミー | ✅ 解消 |
+| 3 | ~~**ノートのモデルが2系統**~~ — ✅ Phase 3 で `Note`（モック）を廃止し `DiaryEntry` に一本化。 | 整合性・保守性 | ✅ 解消 |
 | 4 | **WelcomeView が毎起動で表示** — `showWelcomeScreen` が `@State` 初期値 `true` で永続化なし。スプラッシュとしては許容だが意図の明確化が必要。 | 仕様判断待ち | 低 |
 | 5 | ~~**コメントアウト済みの旧コード**~~ — ✅ Phase 1 で除去済（ContentView/DayTracerApp/Widgets/AppIntent ほか）。 | 可読性 | ✅ 解消 |
 | 6 | **強制アンラップ** が `AuthenticationManager.googleAuth()` に複数（`windows.first!`, `rootViewController!`）。 | クラッシュ要因 | 中 |
@@ -108,6 +109,12 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - 差し替え: `NotesView`（書く側）と `Provider`（読む側）のベタ書き `UserDefaults` アクセスを共有コードに統一。文字列の二重管理を解消。
 - 検証: 両ターゲット ビルド成功 / テスト8件合格。
 
+### Phase 3（一部）: 機能のつながり（2026-06-20）
+
+- ディープリンク: ウィジェットの「Take Notes」/ 小ウィジェットのタップ → `daytracer://notes` → Notes タブへ。`AppRouter`（新規）と `DayTracerApp.onOpenURL`、各ウィジェットの `Link` / `.widgetURL` で実現（URLスキームは Info.plist に登録済みだった）。
+- HomeView 実データ化: モックの `Note` を廃止し、`DiaryRepository`（新規・Firestore アクセス集約）で最新3件を表示。`NotesView` の一覧取得も同リポジトリに統一。
+- 検証: 両ターゲット ビルド成功 / テスト8件合格（実行時のタップ遷移・Firestore 取得は要シミュレータ確認）。
+
 ## 8. 制約・注意点
 
 - **依存は Xcode 15.0 世代にピン留め**: Firebase 10.18.0 / GoogleSignIn 7.0.0 等。Xcode で「Update to Latest Package Versions」を実行すると Xcode 15.0 で弾かれる恐れがあるため避ける。
@@ -117,6 +124,6 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 ## 9. 今後の改善候補（メモ）
 
-- 課題 #2/#3: HomeView の最新ノートを実データ化し、ノートモデルを `DiaryEntry` に統一。
+- 課題（残 Phase 3）: `LiveActivity`（絵文字テンプレ）の削除 or 実装を判断する。
 - **「短い日記」の仕様を `NotesView` に取り込む**: 削除した `DiaryView.swift`（git 履歴に残存）が持っていた「1投稿あたり30文字制限」「1日1投稿（`hasPostedToday`）」は "短い日記" というアプリの狙いに合致。`NotesView` への移植を検討。
 - テスト拡充: 現在は `ProgressCalculators` のみ。認証やノート CRUD は要モック設計。

@@ -141,21 +141,14 @@ struct NotesView: View {
     }
     
     private func loadDiaryEntries() {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-        
-        let db = Firestore.firestore()
-        db.collection("diaryEntries")
-            .whereField("userId", isEqualTo: userId)
-            .order(by: "date", descending: true)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    errorMessage = "Error loading entries: \(error.localizedDescription)"
-                } else {
-                    diaryEntries = snapshot?.documents.compactMap {
-                        DiaryEntry(id: $0.documentID, data: $0.data())
-                    } ?? []
-                }
+        DiaryRepository().fetchLatest { result in
+            switch result {
+            case .success(let entries):
+                diaryEntries = entries
+            case .failure(let error):
+                errorMessage = "Error loading entries: \(error.localizedDescription)"
             }
+        }
     }
     
     private func deleteEntry(at offsets: IndexSet) {
