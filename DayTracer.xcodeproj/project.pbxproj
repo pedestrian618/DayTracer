@@ -17,7 +17,14 @@
 		F31316B72B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */; };
 		F31316B92B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */; };
 		F31316BB2B25D270001087B7 /* ProgressCalculators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316BA2B25D270001087B7 /* ProgressCalculators.swift */; };
+		AEE63EB4A3A543ACBF89250F /* DiaryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBAB7C133A54481BBEF56B8 /* DiaryRepository.swift */; };
 		F31316BC2B25D270001087B7 /* ProgressCalculators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31316BA2B25D270001087B7 /* ProgressCalculators.swift */; };
+		693396246BBD4BBC85E24969 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1123E0F202F4596838E03D9 /* AppSettings.swift */; };
+		051EF0C47ADF4D4987298616 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1123E0F202F4596838E03D9 /* AppSettings.swift */; };
+		7FE694AD2CE043D9A0B1021A /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8C3A00860046538AB72880 /* SharedConfig.swift */; };
+		24E07C6FF7D443AF88D5BB37 /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8C3A00860046538AB72880 /* SharedConfig.swift */; };
+		330A4D9D4413452B8D2ACDDB /* SharedNoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC1AF0E47374C22B5793CAD /* SharedNoteStore.swift */; };
+		34AFA0DDA3204AC1A8538457 /* SharedNoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC1AF0E47374C22B5793CAD /* SharedNoteStore.swift */; };
 		F3A2B9BC2B1B302E005201B4 /* DayTracerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */; };
 		F3A2B9BE2B1B302E005201B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BD2B1B302E005201B4 /* ContentView.swift */; };
 		F3A2B9C02B1B302E005201B4 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2B9BF2B1B302E005201B4 /* Item.swift */; };
@@ -31,7 +38,6 @@
 		F3E74A342B1B373F00902D64 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E74A332B1B373F00902D64 /* WidgetKit.framework */; };
 		F3E74A362B1B373F00902D64 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E74A352B1B373F00902D64 /* SwiftUI.framework */; };
 		F3E74A392B1B373F00902D64 /* DayTracerWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */; };
-		F3E74A3B2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */; };
 		F3E74A3D2B1B373F00902D64 /* DayTracerWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */; };
 		F3E74A3F2B1B373F00902D64 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E74A3E2B1B373F00902D64 /* AppIntent.swift */; };
 		F3E74A412B1B374000902D64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3E74A402B1B374000902D64 /* Assets.xcassets */; };
@@ -91,6 +97,10 @@
 		F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsMediumView.swift; sourceTree = "<group>"; };
 		F31316B82B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsLargeView.swift; sourceTree = "<group>"; };
 		F31316BA2B25D270001087B7 /* ProgressCalculators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCalculators.swift; sourceTree = "<group>"; };
+		D1123E0F202F4596838E03D9 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		EFBAB7C133A54481BBEF56B8 /* DiaryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryRepository.swift; sourceTree = "<group>"; };
+		9F8C3A00860046538AB72880 /* SharedConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfig.swift; sourceTree = "<group>"; };
+		CFC1AF0E47374C22B5793CAD /* SharedNoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedNoteStore.swift; sourceTree = "<group>"; };
 		F3A2B9B82B1B302E005201B4 /* DayTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3A2B9BB2B1B302E005201B4 /* DayTracerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerApp.swift; sourceTree = "<group>"; };
 		F3A2B9BD2B1B302E005201B4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -110,7 +120,6 @@
 		F3E74A332B1B373F00902D64 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		F3E74A352B1B373F00902D64 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsBundle.swift; sourceTree = "<group>"; };
-		F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgetsLiveActivity.swift; sourceTree = "<group>"; };
 		F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTracerWidgets.swift; sourceTree = "<group>"; };
 		F3E74A3E2B1B373F00902D64 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
 		F3E74A402B1B374000902D64 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -194,6 +203,10 @@
 				F3A2B9BD2B1B302E005201B4 /* ContentView.swift */,
 				F31316B32B25BCB5001087B7 /* ProgressViews.swift */,
 				F31316BA2B25D270001087B7 /* ProgressCalculators.swift */,
+				D1123E0F202F4596838E03D9 /* AppSettings.swift */,
+				EFBAB7C133A54481BBEF56B8 /* DiaryRepository.swift */,
+				9F8C3A00860046538AB72880 /* SharedConfig.swift */,
+				CFC1AF0E47374C22B5793CAD /* SharedNoteStore.swift */,
 				F31316A72B1C3C92001087B7 /* WelcomeView.swift */,
 				F3A2B9E92B1B305D005201B4 /* HomeView.swift */,
 				F3A2B9EB2B1B308B005201B4 /* NotesView.swift */,
@@ -247,7 +260,6 @@
 			isa = PBXGroup;
 			children = (
 				F3E74A382B1B373F00902D64 /* DayTracerWidgetsBundle.swift */,
-				F3E74A3A2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift */,
 				F3E74A3C2B1B373F00902D64 /* DayTracerWidgets.swift */,
 				F31316B02B25541A001087B7 /* DayTracerWidgetsSmallView.swift */,
 				F31316B62B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift */,
@@ -439,6 +451,10 @@
 				F3A2B9EA2B1B305D005201B4 /* HomeView.swift in Sources */,
 				F3A2B9EC2B1B308B005201B4 /* NotesView.swift in Sources */,
 				F31316BB2B25D270001087B7 /* ProgressCalculators.swift in Sources */,
+				693396246BBD4BBC85E24969 /* AppSettings.swift in Sources */,
+				AEE63EB4A3A543ACBF89250F /* DiaryRepository.swift in Sources */,
+				7FE694AD2CE043D9A0B1021A /* SharedConfig.swift in Sources */,
+				330A4D9D4413452B8D2ACDDB /* SharedNoteStore.swift in Sources */,
 				F31316B42B25BCB5001087B7 /* ProgressViews.swift in Sources */,
 				F3E74A5A2B1B82C400902D64 /* SettingsView.swift in Sources */,
 				F3A2B9C02B1B302E005201B4 /* Item.swift in Sources */,
@@ -468,7 +484,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3E74A3B2B1B373F00902D64 /* DayTracerWidgetsLiveActivity.swift in Sources */,
 				F31316B72B25C2D5001087B7 /* DayTracerWidgetsMediumView.swift in Sources */,
 				F31316B52B25BCB5001087B7 /* ProgressViews.swift in Sources */,
 				F3E74A3F2B1B373F00902D64 /* AppIntent.swift in Sources */,
@@ -477,6 +492,9 @@
 				F31316B92B25C2F6001087B7 /* DayTracerWidgetsLargeView.swift in Sources */,
 				F31316B22B25541A001087B7 /* DayTracerWidgetsSmallView.swift in Sources */,
 				F31316BC2B25D270001087B7 /* ProgressCalculators.swift in Sources */,
+				051EF0C47ADF4D4987298616 /* AppSettings.swift in Sources */,
+				24E07C6FF7D443AF88D5BB37 /* SharedConfig.swift in Sources */,
+				34AFA0DDA3204AC1A8538457 /* SharedNoteStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

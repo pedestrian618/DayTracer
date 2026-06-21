@@ -24,6 +24,13 @@ struct ProgressCalculators {
         return elapsedSeconds / totalSeconds
     }
     
+    static func calculateWeekProgress(for date: Date, calendar: Calendar = .current) -> Double {
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: date) else { return 0 }
+        let totalSeconds = interval.end.timeIntervalSince(interval.start)
+        let elapsedSeconds = date.timeIntervalSince(interval.start)
+        return elapsedSeconds / totalSeconds
+    }
+
     static func calculateMonthProgress(for date: Date) -> Double {
         let calendar = Calendar.current
         let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date))!

@@ -2,26 +2,28 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var dayProgress: Double = 0
-    @State private var yearProgress: Double = 0
+    @State private var weekProgress: Double = 0
     @State private var monthProgress: Double = 0
+    @State private var yearProgress: Double = 0
     @State private var currentTime: String = ""
     @State private var seconds: String = ""
-    @State private var latestNotes: [Note] = []
-    
+    @State private var latestEntries: [DiaryEntry] = []
+
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm" // 時と分のみ
-        return formatter
-    }()
-    
+
     private static let secondsFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "ss" // 秒のみ
         return formatter
     }()
-    
+
+    /// 時計表示（時:分）。時刻形式の設定に従い 24時間/12時間を切り替える。
+    private static func clockString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = (AppSettings.timeFormat == .twentyFour) ? "H:mm" : "h:mm"
+        return formatter.string(from: date)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -33,7 +35,7 @@ struct HomeView: View {
                 .onAppear {
                     updateProgress()
                     updateTime()
-                    fetchLatestNotes()
+                    loadLatestEntries()
                 }
                 .onReceive(timer) { _ in
                     updateProgress()
@@ -52,13 +54,13 @@ struct HomeView: View {
                 }
             }
         }
-        .background(Color.gray.opacity(0.1))
+        .background(Color(.systemGroupedBackground))
     }
-    
+
     private var headerSection: some View {
         HStack(alignment: .center, spacing: 20) {
             VStack(alignment: .leading) {
-                Text(Date(), style: .date)
+                Text(AppSettings.dateString(from: Date()))
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                 HStack(alignment: .bottom, spacing: 4) {
                     Text(currentTime)
@@ -78,38 +80,46 @@ struct HomeView: View {
         }
         .padding()
     }
-    
+
     private var progressGrid: some View {
         VStack(spacing: 20) {
-            progressBarSection(title: "Year Progress", progress: yearProgress, color: .blue)
+            progressBarSection(title: "Week Progress", progress: weekProgress, color: Color.blue.opacity(0.75))
             progressBarSection(title: "Month Progress", progress: monthProgress, color: Color.blue.opacity(0.5))
+            progressBarSection(title: "Year Progress", progress: yearProgress, color: .blue)
         }
     }
-    
+
     private var notesSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Latest Notes")
                 .font(.headline)
                 .padding(.bottom, 5)
-            
-            ForEach(latestNotes) { note in
-                VStack(alignment: .leading) {
-                    Text(note.text)
-                        .font(.body)
-                    Text(note.date.formatted())
-                        .font(.caption)
-                        .foregroundColor(.gray)
+
+            if latestEntries.isEmpty {
+                Text("まだノートがありません")
+                    .font(.body)
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                ForEach(latestEntries) { entry in
+                    VStack(alignment: .leading) {
+                        Text(entry.text)
+                            .font(.body)
+                        Text(entry.date.formatted())
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(.secondarySystemGroupedBackground))
+                    .cornerRadius(10)
+                    .shadow(radius: 2)
                 }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.white)
-                .cornerRadius(10)
-                .shadow(radius: 2)
             }
         }
         .padding(.horizontal)
     }
-    
+
     private func progressBarSection(title: String, progress: Double, color: Color) -> some View {
         ZStack(alignment: .center) {
             CustomLinearProgressGradientView(progress: progress, gradient: Gradient(colors: [color.opacity(0.5), color]))
@@ -120,33 +130,29 @@ struct HomeView: View {
         }
         .padding(.horizontal)
     }
-    
+
     private func updateProgress() {
         let now = Date()
         dayProgress = ProgressCalculators.calculateDayProgress(for: now)
-        yearProgress = ProgressCalculators.calculateYearProgress(for: now)
+        weekProgress = ProgressCalculators.calculateWeekProgress(for: now, calendar: AppSettings.calendar)
         monthProgress = ProgressCalculators.calculateMonthProgress(for: now)
+        yearProgress = ProgressCalculators.calculateYearProgress(for: now)
     }
-    
+
     private func updateTime() {
         let now = Date()
-        currentTime = HomeView.timeFormatter.string(from: now)
+        currentTime = HomeView.clockString(now)
         seconds = HomeView.secondsFormatter.string(from: now)
     }
-    
-    private func fetchLatestNotes() {
-        // 仮のデータ取得処理
-        latestNotes = [
-            Note(id: 1, text: "Meeting with team", date: Date().addingTimeInterval(-3600)),
-            Note(id: 2, text: "Workout session", date: Date().addingTimeInterval(-7200)),
-            Note(id: 3, text: "Read a book", date: Date().addingTimeInterval(-10800))
-        ]
+
+    private func loadLatestEntries() {
+        DiaryRepository().fetchLatest(limit: 3) { result in
+            switch result {
+            case .success(let entries):
+                latestEntries = entries
+            case .failure:
+                latestEntries = []
+            }
+        }
     }
 }
-
-struct Note: Identifiable {
-    let id: Int
-    let text: String
-    let date: Date
-}
-

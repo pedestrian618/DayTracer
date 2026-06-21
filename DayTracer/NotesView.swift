@@ -12,15 +12,13 @@ import FirebaseAuth
 
 // MARK: - Date Extension
 extension Date {
-    static let shortFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        return formatter
-    }()
-    
+    /// 表示設定（日付・時刻形式）に従ったタイムスタンプ文字列。
     func formatted() -> String {
-        return Date.shortFormatter.string(from: self)
+        return AppSettings.dateTimeString(from: self)
+    }
+
+    func isSameDay(as otherDate: Date) -> Bool {
+        Calendar.current.isDate(self, inSameDayAs: otherDate)
     }
 }
 
@@ -29,7 +27,7 @@ struct DiaryEntry: Identifiable {
     var id: String
     var text: String
     var date: Date
-    
+
     init?(id: String, data: [String: Any]) {
         guard let text = data["text"] as? String,
               let timestamp = data["date"] as? Timestamp else { return nil }
@@ -42,7 +40,7 @@ struct DiaryEntry: Identifiable {
 // MARK: - Diary Entry View
 struct DiaryEntryView: View {
     var entry: DiaryEntry
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -64,7 +62,10 @@ struct NotesView: View {
     @State private var newDiaryText: String = ""
     @State private var errorMessage: String = ""
     @FocusState private var isTextFieldFocused: Bool
-    
+
+    /// 「短い日記」を保つための1投稿あたりの最大文字数。
+    private let maxNoteLength = 30
+
     var body: some View {
         NavigationView {
             VStack {
@@ -74,25 +75,9 @@ struct NotesView: View {
                     }
                     .onDelete(perform: deleteEntry)
                 }
-                
-                HStack {
-                    TextField("Type your Note...", text: $newDiaryText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.vertical, 8)
-                        .focused($isTextFieldFocused)
-                    
-                    Button(action: addNewDiaryEntry) {
-                        Text("Post")
-                            .foregroundColor(.white)
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 12)
-                            .background(Color.blue.opacity(0.7))
-                            .cornerRadius(8)
-                    }
-                    .disabled(newDiaryText.isEmpty)
-                }
-                .padding()
-                
+
+                inputArea
+
                 if !errorMessage.isEmpty {
                     Text(errorMessage)
                         .foregroundColor(.red)
@@ -112,11 +97,54 @@ struct NotesView: View {
             .onAppear(perform: loadDiaryEntries)
         }
     }
-    
+
+    // MARK: - 入力エリア（短い日記の制約つき）
+    private var inputArea: some View {
+        VStack(spacing: 4) {
+            HStack {
+                TextField("Type your Note...", text: $newDiaryText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.vertical, 8)
+                    .focused($isTextFieldFocused)
+                    .disabled(hasPostedToday())
+                    .onChange(of: newDiaryText) { _, newValue in
+                        // 文字数上限を超えたら切り詰める（短い日記の制約）
+                        if newValue.count > maxNoteLength {
+                            newDiaryText = String(newValue.prefix(maxNoteLength))
+                        }
+                    }
+
+                Button(action: addNewDiaryEntry) {
+                    Text("Post")
+                        .foregroundColor(.white)
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .background(Color.blue.opacity(0.7))
+                        .cornerRadius(8)
+                }
+                .disabled(newDiaryText.isEmpty || hasPostedToday())
+            }
+
+            HStack {
+                if hasPostedToday() {
+                    Text("今日はもう投稿しました")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                Spacer()
+                Text("\(newDiaryText.count)/\(maxNoteLength)")
+                    .font(.caption)
+                    .foregroundColor(newDiaryText.count >= maxNoteLength ? .orange : .gray)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+    }
+
     // MARK: - CRUD Operations
     private func addNewDiaryEntry() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        
+
         let db = Firestore.firestore()
         let newEntryRef = db.collection("diaryEntries").document()
         let entryData: [String: Any] = [
@@ -124,7 +152,7 @@ struct NotesView: View {
             "date": Timestamp(date: Date()),
             "userId": userId
         ]
-        
+
         newEntryRef.setData(entryData) { error in
             if let error = error {
                 errorMessage = "Error saving entry: \(error.localizedDescription)"
@@ -139,25 +167,18 @@ struct NotesView: View {
             }
         }
     }
-    
+
     private func loadDiaryEntries() {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-        
-        let db = Firestore.firestore()
-        db.collection("diaryEntries")
-            .whereField("userId", isEqualTo: userId)
-            .order(by: "date", descending: true)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    errorMessage = "Error loading entries: \(error.localizedDescription)"
-                } else {
-                    diaryEntries = snapshot?.documents.compactMap {
-                        DiaryEntry(id: $0.documentID, data: $0.data())
-                    } ?? []
-                }
+        DiaryRepository().fetchLatest { result in
+            switch result {
+            case .success(let entries):
+                diaryEntries = entries
+            case .failure(let error):
+                errorMessage = "Error loading entries: \(error.localizedDescription)"
             }
+        }
     }
-    
+
     private func deleteEntry(at offsets: IndexSet) {
         offsets.forEach { index in
             let entry = diaryEntries[index]
@@ -165,7 +186,7 @@ struct NotesView: View {
             diaryEntries.remove(at: index)
         }
     }
-    
+
     private func deleteDiaryEntry(entryId: String) {
         Firestore.firestore().collection("diaryEntries").document(entryId).delete { error in
             if let error = error {
@@ -173,10 +194,14 @@ struct NotesView: View {
             }
         }
     }
-    
+
+    /// 1日1投稿の制約: 最新エントリの日付が今日なら true。
+    private func hasPostedToday() -> Bool {
+        guard let latest = diaryEntries.first else { return false }
+        return latest.date.isSameDay(as: Date())
+    }
+
     private func saveLatestDiaryEntryInSharedContainer(entry: DiaryEntry) {
-        let sharedDefaults = UserDefaults(suiteName: "group.junkyfly.daytracer.notes")
-        sharedDefaults?.set(entry.text, forKey: "latestNoteText")
-        sharedDefaults?.set(entry.date.formatted(), forKey: "latestNoteDate")
+        SharedNoteStore().saveLatestNote(text: entry.text, date: entry.date.formatted())
     }
 }

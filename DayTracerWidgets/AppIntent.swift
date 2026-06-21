@@ -16,7 +16,7 @@ enum ColorOption: String, CaseIterable, AppEnum {
     case purple = "🟪Purple"
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation = "Color Options"
-    
+
     static var caseDisplayRepresentations: [ColorOption : DisplayRepresentation] = [
         .red: DisplayRepresentation(title: LocalizedStringResource("🟥Red")),
         .green: DisplayRepresentation(title: LocalizedStringResource("🟩Green")),
@@ -32,19 +32,11 @@ struct ConfigurationAppIntent: WidgetConfigurationIntent {
 
     @Parameter(title: "Select Main Color", default: ColorOption.blue)
     var selectedColor: ColorOption
-    
+
     @Parameter(title: "Select Sub Color", default: ColorOption.yellow)
     var selectedSubColor: ColorOption
 
     static var parameterSummary: some ParameterSummary {
-            Summary("Main color set to \(\.$selectedColor), sub color set to \(\.$selectedSubColor).")
-        }
+        Summary("Main color set to \(\.$selectedColor), sub color set to \(\.$selectedSubColor).")
+    }
 }
-//struct ConfigurationAppIntent: WidgetConfigurationIntent {
-//    static var title: LocalizedStringResource = "Configuration"
-//    static var description = IntentDescription("This is an example widget.")
-//
-//    // An example configurable parameter.
-//    @Parameter(title: "Favorite Emoji", default: "😃")
-//    var favoriteEmoji: String
-//}
