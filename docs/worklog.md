@@ -14,6 +14,7 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 - **詳細**:
   - `AppSettings`（App Group 共有・両ターゲット）を新規作成し、「週の始まり」「日付形式」「時刻形式(12/24h)」を保存。`SharedConfig.defaults` を追加。
   - Settings に「表示」セクション（3 Picker）＋変更時の `WidgetCenter.reloadAllTimelines()`。
+  - 日付形式は6種: 数字順（YMD/MDY/DMY）＋月名つき（`June 20, 2026`）＋曜日つき（`Friday, June 20, 2026`）＋システム。Picker ラベルはサンプル日付を端末ロケールで整形して実例表示。
   - 適用: `HomeView`（日付・時計・週進捗）、`NotesView`（タイムスタンプ）、ウィジェット（時刻）。`calculateWeekProgress` に `calendar` 引数を追加（テスト1件追加、計11件）。
   - 関数シグネチャ変更でビルドのインクリメンタル不整合が発生 → DerivedData の該当中間生成物を削除して解消（コードは正常）。
 - **検証**: 両ターゲット ビルド成功 / `ProgressCalculatorsTests` 11件合格。実機での反映は要確認。

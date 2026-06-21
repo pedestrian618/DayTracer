@@ -136,7 +136,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 ### 表示設定 / i18n（2026-06-21）
 
-- `AppSettings`（新規・両ターゲット共有）で「週の始まり」「日付形式」「時刻形式(12/24h)」を App Group の UserDefaults に保存。
+- `AppSettings`（新規・両ターゲット共有）で「週の始まり」「日付形式（数字順 / 月名 / 曜日つき の6種）」「時刻形式(12/24h)」を App Group の UserDefaults に保存。
 - Settings に「表示」セクション（3 Picker）を追加。変更時に `WidgetCenter.reloadAllTimelines()` でウィジェットへ反映。
 - 適用: `HomeView`（日付・時計・週進捗）、`NotesView`/`DiaryEntryView`（タイムスタンプ）、ウィジェット（時刻表示）。`ProgressCalculators.calculateWeekProgress` に `calendar` 引数を追加。
 - 検証: 両ターゲット ビルド成功 / テスト11件合格（週の firstWeekday テストを追加）。実機での反映は要確認。

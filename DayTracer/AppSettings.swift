@@ -45,24 +45,43 @@ enum TimeFormatOption: String, CaseIterable, Identifiable {
 }
 
 enum DateStyleOption: String, CaseIterable, Identifiable {
-    case system, ymd, mdy, dmy
+    case system   // 端末ロケールの medium
+    case ymd      // 2026/06/20
+    case mdy      // 06/20/2026
+    case dmy      // 20/06/2026
+    case monthName // 月名つき（ロケール依存）: June 20, 2026 / 2026年6月20日
+    case full      // 曜日つき: Friday, June 20, 2026
+
     var id: String { rawValue }
-    var label: String {
+
+    /// この形式の DateFormatter を生成する。
+    func makeFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
         switch self {
-        case .system: return "システム"
-        case .ymd: return "2026/06/20"
-        case .mdy: return "06/20/2026"
-        case .dmy: return "20/06/2026"
+        case .system:
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .none
+        case .ymd:
+            formatter.dateFormat = "yyyy/MM/dd"
+        case .mdy:
+            formatter.dateFormat = "MM/dd/yyyy"
+        case .dmy:
+            formatter.dateFormat = "dd/MM/yyyy"
+        case .monthName:
+            formatter.dateStyle = .long
+            formatter.timeStyle = .none
+        case .full:
+            formatter.dateStyle = .full
+            formatter.timeStyle = .none
         }
+        return formatter
     }
-    /// DateFormatter.dateFormat。system は nil（端末ロケールの medium スタイル）。
-    var template: String? {
-        switch self {
-        case .system: return nil
-        case .ymd: return "yyyy/MM/dd"
-        case .mdy: return "MM/dd/yyyy"
-        case .dmy: return "dd/MM/yyyy"
-        }
+
+    /// Picker 用ラベル。サンプル日付を端末ロケールで整形し、実際の見え方を示す。
+    var label: String {
+        let sample = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 20)) ?? Date()
+        let example = makeFormatter().string(from: sample)
+        return self == .system ? "システム（\(example)）" : example
     }
 }
 
@@ -114,14 +133,7 @@ enum AppSettings {
 
     /// 設定に従った日付文字列。
     static func dateString(from date: Date) -> String {
-        let formatter = DateFormatter()
-        if let template = dateStyle.template {
-            formatter.dateFormat = template
-        } else {
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .none
-        }
-        return formatter.string(from: date)
+        dateStyle.makeFormatter().string(from: date)
     }
 
     /// 日付＋時刻（ノートのタイムスタンプ表示用）。
