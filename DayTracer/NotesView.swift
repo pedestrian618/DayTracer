@@ -12,15 +12,9 @@ import FirebaseAuth
 
 // MARK: - Date Extension
 extension Date {
-    static let shortFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        return formatter
-    }()
-
+    /// 表示設定（日付・時刻形式）に従ったタイムスタンプ文字列。
     func formatted() -> String {
-        return Date.shortFormatter.string(from: self)
+        return AppSettings.dateTimeString(from: self)
     }
 
     func isSameDay(as otherDate: Date) -> Bool {

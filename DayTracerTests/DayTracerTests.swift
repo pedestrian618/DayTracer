@@ -87,6 +87,21 @@ final class ProgressCalculatorsTests: XCTestCase {
         XCTAssertEqual(ProgressCalculators.calculateWeekProgress(for: mid), 0.5, accuracy: 1e-6)
     }
 
+    func testWeekProgress_respectsFirstWeekday() {
+        func cal(firstWeekday: Int) -> Calendar {
+            var c = Calendar(identifier: .gregorian)
+            c.timeZone = TimeZone.current
+            c.firstWeekday = firstWeekday
+            return c
+        }
+        let wednesday = makeDate(year: 2024, month: 6, day: 12, hour: 12)
+        let sundayStart = ProgressCalculators.calculateWeekProgress(for: wednesday, calendar: cal(firstWeekday: 1))
+        let mondayStart = ProgressCalculators.calculateWeekProgress(for: wednesday, calendar: cal(firstWeekday: 2))
+        XCTAssertTrue((0.0...1.0).contains(sundayStart))
+        XCTAssertTrue((0.0...1.0).contains(mondayStart))
+        XCTAssertNotEqual(sundayStart, mondayStart)
+    }
+
     // MARK: - 範囲チェック
 
     func testAllProgressValues_areWithinValidRange() {

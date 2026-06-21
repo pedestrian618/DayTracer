@@ -11,17 +11,18 @@ struct HomeView: View {
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm" // 時と分のみ
-        return formatter
-    }()
-
     private static let secondsFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "ss" // 秒のみ
         return formatter
     }()
+
+    /// 時計表示（時:分）。時刻形式の設定に従い 24時間/12時間を切り替える。
+    private static func clockString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = (AppSettings.timeFormat == .twentyFour) ? "H:mm" : "h:mm"
+        return formatter.string(from: date)
+    }
 
     var body: some View {
         NavigationStack {
@@ -59,7 +60,7 @@ struct HomeView: View {
     private var headerSection: some View {
         HStack(alignment: .center, spacing: 20) {
             VStack(alignment: .leading) {
-                Text(Date(), style: .date)
+                Text(AppSettings.dateString(from: Date()))
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                 HStack(alignment: .bottom, spacing: 4) {
                     Text(currentTime)
@@ -133,14 +134,14 @@ struct HomeView: View {
     private func updateProgress() {
         let now = Date()
         dayProgress = ProgressCalculators.calculateDayProgress(for: now)
-        weekProgress = ProgressCalculators.calculateWeekProgress(for: now)
+        weekProgress = ProgressCalculators.calculateWeekProgress(for: now, calendar: AppSettings.calendar)
         monthProgress = ProgressCalculators.calculateMonthProgress(for: now)
         yearProgress = ProgressCalculators.calculateYearProgress(for: now)
     }
 
     private func updateTime() {
         let now = Date()
-        currentTime = HomeView.timeFormatter.string(from: now)
+        currentTime = HomeView.clockString(now)
         seconds = HomeView.secondsFormatter.string(from: now)
     }
 

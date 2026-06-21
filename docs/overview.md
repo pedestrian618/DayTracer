@@ -3,7 +3,7 @@
 > このドキュメントは「コードを読めば分かること」ではなく、**何を・なぜ作っているか**（意図）を残すためのものです。
 > コードを変更したら、関連する記述をここも更新してください（運用ルールは `CLAUDE.md` 参照）。
 
-最終更新: 2026-06-20
+最終更新: 2026-06-21
 
 ---
 
@@ -34,7 +34,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - **WelcomeView**: `welcomeImage` を約1.5秒表示してフェードアウトするスプラッシュ。`showWelcomeScreen` バインディングで `ContentView` に遷移。
 - **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。日進捗は円形ゲージ、週/月/年進捗は横バー。最新ノートは `DiaryRepository`（Firestore）から最新3件を取得して表示。背景はシステム色でダーク/ライト両対応。
 - **NotesView**: Firestore コレクション `diaryEntries` に対して CRUD。投稿時に最新ノートを App Group の共有コンテナへ保存（ウィジェット連携用）。
-- **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。
+- **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。加えて「表示」セクションで週の始まり・日付/時刻形式を設定（`AppSettings`、アプリ・ウィジェット共通）。
 
 ---
 
@@ -44,7 +44,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 1. **SwiftData (`Item`)** — `DayTracerApp` で `ModelContainer` を構築。スキーマは `Item`（`timestamp: Date`）のみ。**現状ほぼ未使用**（プレビューと初期テンプレートの名残）。
 2. **Firestore (`diaryEntries`)** — 日記の本体。`{ text, date: Timestamp, userId }`。`userId` で絞り込み、`date` 降順で取得。
-3. **App Group 共有 UserDefaults** — `group.junkyfly.daytracer.notes`。キー `latestNoteText` / `latestNoteDate` に最新ノートを保存し、ウィジェットへ受け渡す。**アクセスは `SharedConfig`（suite 名・キー名）と `SharedNoteStore`（read/write）に集約**され、アプリ・ウィジェット両ターゲットで共有（Phase 2）。
+3. **App Group 共有 UserDefaults** — `group.junkyfly.daytracer.notes`。キー `latestNoteText` / `latestNoteDate` に最新ノートを保存し、ウィジェットへ受け渡す。**アクセスは `SharedConfig`（suite 名・キー名）と `SharedNoteStore`（read/write）に集約**され、アプリ・ウィジェット両ターゲットで共有（Phase 2）。表示設定（週の始まり・日付/時刻形式）も同じ共有 UserDefaults に `AppSettings` 経由で保存し、両ターゲットが参照（2026-06-21）。
 
 ---
 
@@ -71,7 +71,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 純粋な計算（副作用なし）。`Calendar.current` 基準。
 
 - `calculateDayProgress(for:)` — 当日 0:00 からの経過率。
-- `calculateWeekProgress(for:)` — 週初め（ロケール依存）からの経過率。
+- `calculateWeekProgress(for:calendar:)` — 週初めからの経過率。`calendar`（既定 `.current`）で週の始まりを指定でき、`AppSettings` の設定を反映できる。
 - `calculateMonthProgress(for:)` — 月初からの経過率。
 - `calculateYearProgress(for:)` — 年初からの経過率。
 
@@ -134,6 +134,13 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - ロック画面ウィジェット: 円形/長方形/インラインの3種に対応（`supportedFamilies` 拡張＋`Gauge` 表示）。
 - 検証: 両ターゲット ビルド成功 / テスト10件合格（実機での表示は要確認）。
 
+### 表示設定 / i18n（2026-06-21）
+
+- `AppSettings`（新規・両ターゲット共有）で「週の始まり」「日付形式」「時刻形式(12/24h)」を App Group の UserDefaults に保存。
+- Settings に「表示」セクション（3 Picker）を追加。変更時に `WidgetCenter.reloadAllTimelines()` でウィジェットへ反映。
+- 適用: `HomeView`（日付・時計・週進捗）、`NotesView`/`DiaryEntryView`（タイムスタンプ）、ウィジェット（時刻表示）。`ProgressCalculators.calculateWeekProgress` に `calendar` 引数を追加。
+- 検証: 両ターゲット ビルド成功 / テスト11件合格（週の firstWeekday テストを追加）。実機での反映は要確認。
+
 ## 8. 制約・注意点
 
 - **依存は Xcode 15.0 世代にピン留め**: Firebase 10.18.0 / GoogleSignIn 7.0.0 等。Xcode で「Update to Latest Package Versions」を実行すると Xcode 15.0 で弾かれる恐れがあるため避ける。
@@ -147,3 +154,4 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - 課題 #7: ほぼ未使用の SwiftData `Item` の扱い（日記を寄せる or 削除）を決める。
 - ~~**「短い日記」の仕様を `NotesView` に取り込む**~~ — ✅ 2026-06-20 実装（30文字上限・1日1投稿・文字数カウンタ）。次の候補は気分（emoji）タグ・編集/検索・カレンダー表示。
 - テスト拡充: 現在は `ProgressCalculators` のみ。認証やノート CRUD は要モック設計。
+- UI ローカライズ: 「Latest Notes」等の英語ラベルと日本語が混在。表示形式（日付/時刻/週始まり）の設定は 2026-06-21 に対応済み。

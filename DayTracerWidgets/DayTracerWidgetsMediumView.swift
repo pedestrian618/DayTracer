@@ -17,7 +17,7 @@ struct DayTracerWidgetsMediumView: View {
             HStack {
                 // 左上に時間と曜日、日付とノートを縦方向に積み上げ
                 VStack(alignment: .leading) {
-                    Text(entry.date, style: .time)
+                    Text(AppSettings.timeString(from: entry.date))
                         .font(.system(size: 32, weight: .bold, design: .default))
                         .padding(.leading, 20)
                     Text(entry.date.formattedAsDayMonthDate())

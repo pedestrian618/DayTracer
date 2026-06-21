@@ -153,7 +153,7 @@ struct DayTracerWidgetsRectangularView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(entry.date, style: .time)
+            Text(AppSettings.timeString(from: entry.date))
                 .font(.headline)
             Gauge(value: entry.dayProgress) {
                 Text("Day")
