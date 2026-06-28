@@ -32,7 +32,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 ### 各画面の意図
 - **WelcomeView**: `welcomeImage` を約1.5秒表示してフェードアウトするスプラッシュ。`showWelcomeScreen` バインディングで `ContentView` に遷移。
-- **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。日進捗は円形ゲージ、週/月/年進捗は横バー。最新ノートは `DiaryRepository`（Firestore）から最新3件を取得して表示。背景はシステム色でダーク/ライト両対応。
+- **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。上部はカード化したヘッダーで、**時刻を主役**に（`.rounded` で統一・等幅数字 `monospacedDigit`）、日付は1行の脇役（`.secondary`）。日進捗は円形ゲージ＋「Today」ラベルで小数3桁オドメーター表示（最後の桁がほぼ毎秒進む“動いてる感”をコンセプトとして担保）。青アクセントは円のみ。週/月/年進捗は横バーで整数%。最新ノートは `DiaryRepository`（Firestore）から最新3件を取得して表示。背景はシステム色でダーク/ライト両対応。
 - **NotesView**: Firestore コレクション `diaryEntries` に対して CRUD。投稿時に最新ノートを App Group の共有コンテナへ保存（ウィジェット連携用）。
 - **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。加えて「表示」セクションで週の始まり・日付/時刻形式を設定（`AppSettings`、アプリ・ウィジェット共通）。
 
@@ -140,6 +140,12 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - Settings に「表示」セクション（3 Picker）を追加。変更時に `WidgetCenter.reloadAllTimelines()` でウィジェットへ反映。
 - 適用: `HomeView`（日付・時計・週進捗）、`NotesView`/`DiaryEntryView`（タイムスタンプ）、ウィジェット（時刻表示）。`ProgressCalculators.calculateWeekProgress` に `calendar` 引数を追加。
 - 検証: 両ターゲット ビルド成功 / テスト11件合格（週の firstWeekday テストを追加）。実機での反映は要確認。
+
+### ホーム上部（ヘッダー）のリファイン（2026-06-21）
+
+- 動機: 上部が「ごちゃつく」印象 —— 書体3種（rounded/monospaced/default）混在・サイズ4段・青が2か所（秒と円）・フル日付が大きすぎて3〜4行に折返し・全数値が小数2桁。
+- 変更（`HomeView.headerSection`）: ①角丸カード化（`secondarySystemGroupedBackground`）②書体を `.rounded` に統一③日付を1行・`.secondary` の脇役に（`lineLimit(1)`＋`minimumScaleFactor`）④時刻を主役、秒は青をやめ控えめな添え字＋ベースライン揃え（旧 `.offset` 廃止）⑤青アクセントは日進捗の円のみ＋「Today」ラベル⑥日進捗は小数3桁＋`monospacedDigit`（桁幅固定で“ほぼ毎秒進む”を崩さず表現＝コンセプト維持）⑦週/月/年バーは整数%＋`.rounded`＋`monospacedDigit`。
+- 検証: 両ターゲット ビルド成功 / テスト11件＋UIテスト合格。実機での見え方は要確認。
 
 ## 8. 制約・注意点
 
