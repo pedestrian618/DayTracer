@@ -93,7 +93,13 @@ enum AppSettings {
         static let weekStart = "settings.weekStart"
         static let timeFormat = "settings.timeFormat"
         static let dateStyle = "settings.dateStyle"
+        static let dayStartMinutes = "settings.dayStartMinutes"
+        static let dayEndMinutes = "settings.dayEndMinutes"
     }
+
+    /// 活動時間（日バーの窓）のデフォルト。0:00→24:00 ＝ 従来挙動・他メーターと整合。
+    static let defaultDayStartMinutes = 0
+    static let defaultDayEndMinutes = 1440
 
     private static var defaults: UserDefaults? { SharedConfig.defaults }
 
@@ -107,6 +113,21 @@ enum AppSettings {
         DateStyleOption(rawValue: defaults?.string(forKey: Keys.dateStyle) ?? "") ?? .system
     }
 
+    /// 日バー（活動時間）の開始時刻。その日の midnight からの分数。未設定なら 0（=0:00）。
+    static var dayStartMinutes: Int {
+        guard let d = defaults, d.object(forKey: Keys.dayStartMinutes) != nil else {
+            return defaultDayStartMinutes
+        }
+        return d.integer(forKey: Keys.dayStartMinutes)
+    }
+    /// 日バー（活動時間）の終了時刻。分数。1440 超（翌日跨ぎ）を許可。未設定なら 1440（=24:00）。
+    static var dayEndMinutes: Int {
+        guard let d = defaults, d.object(forKey: Keys.dayEndMinutes) != nil else {
+            return defaultDayEndMinutes
+        }
+        return d.integer(forKey: Keys.dayEndMinutes)
+    }
+
     /// 週の始まり設定を反映したカレンダー。
     static var calendar: Calendar {
         var c = Calendar.current
@@ -114,6 +135,14 @@ enum AppSettings {
             c.firstWeekday = firstWeekday
         }
         return c
+    }
+
+    /// 設定された活動時間の窓を反映した日進捗。アプリ・ウィジェットはこの窓口を経由して
+    /// 「日の境界」を一箇所に集約する（個別の窓計算を散らさない）。
+    static func dayProgress(for date: Date) -> Double {
+        ProgressCalculators.calculateDayProgress(for: date,
+                                                 startMinutes: dayStartMinutes,
+                                                 endMinutes: dayEndMinutes)
     }
 
     /// 設定に従った時刻文字列。

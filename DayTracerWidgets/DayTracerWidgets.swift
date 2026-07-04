@@ -83,7 +83,7 @@ struct SimpleEntry: TimelineEntry {
     init(date: Date, selectedColor: Color, selectedSubColor: Color, latestNoteText: String, latestNoteDate: String) {
         self.date = date
         self.yearProgress = ProgressCalculators.calculateYearProgress(for: date)
-        self.dayProgress = ProgressCalculators.calculateDayProgress(for: date)
+        self.dayProgress = AppSettings.dayProgress(for: date)
         self.monthProgress = ProgressCalculators.calculateMonthProgress(for: date)
         self.selectedColor = selectedColor
         self.selectedSubColor = selectedSubColor

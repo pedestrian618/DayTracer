@@ -159,7 +159,7 @@ struct HomeView: View {
 
     private func updateProgress() {
         let now = Date()
-        dayProgress = ProgressCalculators.calculateDayProgress(for: now)
+        dayProgress = AppSettings.dayProgress(for: now)
         weekProgress = ProgressCalculators.calculateWeekProgress(for: now, calendar: AppSettings.calendar)
         monthProgress = ProgressCalculators.calculateMonthProgress(for: now)
         yearProgress = ProgressCalculators.calculateYearProgress(for: now)

@@ -3,7 +3,7 @@
 > このドキュメントは「コードを読めば分かること」ではなく、**何を・なぜ作っているか**（意図）を残すためのものです。
 > コードを変更したら、関連する記述をここも更新してください（運用ルールは `CLAUDE.md` 参照）。
 
-最終更新: 2026-06-21
+最終更新: 2026-07-04
 
 ---
 
@@ -34,7 +34,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - **WelcomeView**: `welcomeImage` を約1.5秒表示してフェードアウトするスプラッシュ。`showWelcomeScreen` バインディングで `ContentView` に遷移。
 - **HomeView**: 1秒ごとの `Timer.publish` で時刻と進捗を更新。上部はカード化したヘッダーで、**時刻を主役**に（`.rounded` で統一・等幅数字 `monospacedDigit`）、日付は1行の脇役（`.secondary`）。日進捗は円形ゲージ＋「Today」ラベルで小数3桁オドメーター表示（最後の桁がほぼ毎秒進む“動いてる感”をコンセプトとして担保）。青アクセントは円のみ。週/月/年進捗は横バーで整数%。最新ノートは `DiaryRepository`（Firestore）から最新3件を取得して表示。背景はシステム色でダーク/ライト両対応。
 - **NotesView**: Firestore コレクション `diaryEntries` に対して CRUD。投稿時に最新ノートを App Group の共有コンテナへ保存（ウィジェット連携用）。
-- **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。加えて「表示」セクションで週の始まり・日付/時刻形式を設定（`AppSettings`、アプリ・ウィジェット共通）。
+- **SettingsView**: `AuthenticationManager.shared` を監視。未ログイン時は `LoginView`、ログイン時は `UserSettingsView`（メール表示・サインアウト）。加えて「表示」セクションで週の始まり・日付/時刻形式を設定（`AppSettings`、アプリ・ウィジェット共通）。「活動時間」セクションで日バーの開始時刻＋長さ（＝終了時刻）を設定（開始＋長さで持ち `end - start <= 24h` を構造的に保証、翌日跨ぎ対応）。
 
 ---
 
@@ -70,7 +70,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 
 純粋な計算（副作用なし）。`Calendar.current` 基準。
 
-- `calculateDayProgress(for:)` — 当日 0:00 からの経過率。
+- `calculateDayProgress(for:startMinutes:endMinutes:calendar:)` — 「活動時間」窓での日進捗。`startMinutes`（当日 midnight からの分）でリセットし、`endMinutes - startMinutes` の長さで 0→100%。終了後は次の開始まで 100% に張り付く。`endMinutes` は 1440 超（翌日跨ぎ, 例 25:00=1500）を許可。既定 0 / 1440 では当日 0:00 起点・24h・張り付きなしで従来と完全一致（月/年/週と整合）。窓を変えると日バーだけがローカルに非整合な動きになる（設計上の許容）。呼び出しは `AppSettings.dayProgress(for:)` に集約（アプリ・ウィジェット共通の窓口）。
 - `calculateWeekProgress(for:calendar:)` — 週初めからの経過率。`calendar`（既定 `.current`）で週の始まりを指定でき、`AppSettings` の設定を反映できる。
 - `calculateMonthProgress(for:)` — 月初からの経過率。
 - `calculateYearProgress(for:)` — 年初からの経過率。
@@ -146,6 +146,15 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 - 動機: 上部が「ごちゃつく」印象 —— 書体3種（rounded/monospaced/default）混在・サイズ4段・青が2か所（秒と円）・フル日付が大きすぎて3〜4行に折返し・全数値が小数2桁。
 - 変更（`HomeView.headerSection`）: ①角丸カード化（`secondarySystemGroupedBackground`）②書体を `.rounded` に統一③日付を1行・`.secondary` の脇役に（`lineLimit(1)`＋`minimumScaleFactor`）④時刻を主役、秒は青をやめ控えめな添え字＋ベースライン揃え（旧 `.offset` 廃止）⑤青アクセントは日進捗の円のみ＋「Today」ラベル⑥日進捗は小数3桁＋`monospacedDigit`（桁幅固定で“ほぼ毎秒進む”を崩さず表現＝コンセプト維持）⑦週/月/年バーは整数%＋`.rounded`＋`monospacedDigit`。
 - 検証: 両ターゲット ビルド成功 / テスト11件＋UIテスト合格。実機での見え方は要確認。
+
+### 活動時間（日バーのユーザー定義）（2026-07-04）
+
+- 動機: カレンダー上の 0:00 起点だと「生活時間帯と日進捗のパーセンテージが合わず気持ち悪い」（例: 昼に起きたら既に 50% 消費済み）。
+- モデル: 日バーを「活動時間」窓に置換。深夜0時から**切り離し**、ユーザー指定の開始時刻でリセット → `長さ` で 0→100% → 次の開始まで 100% 張り付き。25:00（翌1:00）等の翌日跨ぎに対応。
+- **割り切り**: 月/年/週/ノート所属日は 0:00 基準のまま。窓を変えたときに**日バーだけ**がローカルに非整合になる（意図的な許容）。デフォルト 0:00・24h では従来と完全一致。
+- 実装: `ProgressCalculators.calculateDayProgress` に `startMinutes`/`endMinutes`/`calendar`（既定値つき, 後方互換）を追加。`AppSettings` に `dayStartMinutes`/`dayEndMinutes`（App Group 共有）と窓口 `dayProgress(for:)`。`HomeView`・ウィジェット timeline provider の呼び出しを窓口経由に統一。Settings に「活動時間」セクション（開始 DatePicker ＋ 長さ Picker、終了時刻はキャプション表示）。
+- 既知の制限: 長さは1時間刻み（分は開始時刻のみ）。「Today」ラベルは据え置き。
+- 検証: 両ターゲット ビルド成功 / テスト16件（日進捗の窓・クランプ・翌日跨ぎ・後方互換を追加）＋UIテスト合格。実機での見え方は要確認。
 
 ## 8. 制約・注意点
 
