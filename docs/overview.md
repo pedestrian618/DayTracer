@@ -3,7 +3,7 @@
 > このドキュメントは「コードを読めば分かること」ではなく、**何を・なぜ作っているか**（意図）を残すためのものです。
 > コードを変更したら、関連する記述をここも更新してください（運用ルールは `CLAUDE.md` 参照）。
 
-最終更新: 2026-07-04
+最終更新: 2026-07-06
 
 ---
 
@@ -159,7 +159,7 @@ DayTracer は、1日・1ヶ月・1年の「経過率」をリアルタイムに�
 ## 8. 制約・注意点
 
 - **依存は Xcode 15.0 世代にピン留め**: Firebase 10.18.0 / GoogleSignIn 7.0.0 等。Xcode で「Update to Latest Package Versions」を実行すると Xcode 15.0 で弾かれる恐れがあるため避ける。
-- リンカ警告 `ignoring duplicate libraries: '-lc++', '-lsqlite3', '-lz'` は Xcode 15 + SPM の既知の無害な警告。
+- リンカ警告 `ignoring duplicate libraries: '-lc++', '-lsqlite3', '-lz'` は Xcode 15 + SPM（Firebase のバイナリ依存が同じシステムライブラリを重複リンク指定する）の既知の無害な警告だったが、2026-07-06 にアプリターゲットの `OTHER_LDFLAGS` へ `-Wl,-no_warn_duplicate_libraries` を追加して抑止済み。Firebase 側が解消したらフラグは外してよい。
 
 ---
 
