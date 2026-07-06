@@ -13,7 +13,7 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 - **概要**: ビルド時に毎回出ていた `Ignoring duplicate libraries: '-lc++', '-lsqlite3', '-lz'` 警告を抑止。
 - **詳細**: Firebase の SPM バイナリ依存（abseil-cpp-binary / grpc-binary / leveldb）が同じシステムライブラリのリンクを重複宣言するため、Xcode 15 の新リンカが警告する既知の問題（firebase-ios-sdk#11923）。アプリターゲット（DayTracer）の Debug/Release 両構成の `OTHER_LDFLAGS` に `-Wl,-no_warn_duplicate_libraries` を追加。挙動への影響なし。Firebase 側で解消されたらフラグは外してよい。
 - **検証**: 両ターゲット ビルド成功（警告消滅を確認）／ `xcodebuild test` 合格。
-- **コミット**: (未コミット)
+- **コミット**: 853af34
 
 ---
 
