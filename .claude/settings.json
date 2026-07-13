@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(xcodebuild *)",
+      "Bash(xcrun simctl *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git fetch*)",
+      "Bash(git pull*)",
+      "Bash(git push*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // empty' | grep -q 'git commit' || exit 0; command -v xcodebuild >/dev/null 2>&1 || exit 0; cd \"$CLAUDE_PROJECT_DIR\" && xcodebuild test -project DayTracer.xcodeproj -scheme DayTracer -destination 'platform=iOS Simulator,name=iPhone 15' -quiet || { echo 'xcodebuild test が失敗しました。テストを直してから再度コミットしてください。' >&2; exit 2; }",
+            "timeout": 900,
+            "statusMessage": "コミット前にテストを実行中 (xcodebuild test)..."
+          }
+        ]
+      }
+    ]
+  }
+}

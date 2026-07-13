@@ -7,6 +7,17 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 
 ---
 
+## 2026-07-13
+
+### Claude Code プロジェクト設定の追加（.claude/settings.json）
+- **概要**: Sonnet 5 など mid-tier モデルでも自律的に作業を完走できるよう、Claude Code のプロジェクト設定を新規作成。
+- **詳細**:
+  - `permissions.defaultMode: acceptEdits` — ファイル編集の許可プロンプトを省略。
+  - allowlist — `xcodebuild` / `xcrun simctl` / `git`（status・diff・log・show・branch・checkout・add・commit・fetch・pull・push）を事前承認。
+  - PreToolUse フック — `git commit` を含む Bash コマンドの直前に `xcodebuild test` を実行し、失敗時はコミットをブロック（exit 2）。CLAUDE.md の「コミット前チェックリスト」を仕組み側で担保。`xcodebuild` が無い環境（Linux コンテナ等）では自動スキップ。
+- **検証**: `jq` で JSON スキーマ検証 OK。フックコマンドを stdin パイプでテストし、commit 含む/含まないペイロード双方で期待どおりの挙動（Linux 環境ではガードによりスキップ）。アプリコード変更なしのためビルド/テストは対象外（この環境では xcodebuild 実行不可）。実際のテスト実行パスは macOS で要確認。
+- **コミット**: （このエントリと同じコミット）
+
 ## 2026-06-21
 
 ### 表示設定（週の始まり・日付/時刻形式）
