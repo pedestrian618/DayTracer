@@ -17,7 +17,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-DayTracer is an iOS SwiftUI application that tracks time progress throughout the day, month, and year. The app features a main dashboard showing real-time progress bars, a notes section for diary entries, and customizable widgets for the iOS home screen.
+DayTracer is an iOS SwiftUI application that visualizes time being spent — a "remaining-time instrument panel" for people who live with urgency. The main dashboard shows the **remaining** percentage of the year (6 decimal places, continuously ticking), remaining bars for day/week/month, a 365-day year grid, and a "使途記録" (time-spend log, formerly notes). Widgets use `Text(timerInterval:)` / `ProgressView(timerInterval:)` so they keep moving every second without timeline reloads.
+
+**Design system**: `DayTracer/DesignTokens.swift` (`enum DS { Colors / Fonts / Metrics }`) is shared by both targets. Do NOT write literal colors/font sizes in views — go through DS tokens. Palette is a dark panel + white monospaced numerals + one amber accent used only for "remaining time". Sister app masume (paper/ink, soft) is deliberately the opposite pole.
 
 ### Key Technologies
 - **SwiftUI**: Primary UI framework
@@ -55,8 +57,9 @@ DayTracer is an iOS SwiftUI application that tracks time progress throughout the
 - **SettingsView.swift**: App configuration
 
 ### Progress System
-- **ProgressCalculators.swift**: Centralized logic for calculating day/month/year progress percentages
-- **ProgressViews.swift**: Custom SwiftUI components for linear and circular progress bars with gradient support
+- **ProgressCalculators.swift**: Centralized logic for day/week/month/year progress, plus `DateInterval` helpers (`dayInterval` etc.) for widget `timerInterval` APIs and "remaining" helpers (`remainingTimeOfYear`, `dayOfYear`, `daysInYear`, `dayWeightOfYear`)
+- **ProgressViews.swift**: Shared drain-style components — `DrainBarView` (spent side dark + hatched, remaining side amber) and `StripedPattern` (45° Canvas hatch)
+- **DesignTokens.swift**: `enum DS` design tokens (colors/fonts/metrics), shared with the widget target
 
 ### Widget Extension
 - **DayTracerWidgets/**: Separate target for iOS home screen widgets
@@ -94,9 +97,9 @@ Widgets are built as a separate extension target and require:
 - Progress values are between 0.0 and 1.0
 
 ### Custom UI Components
-- Gradient-enabled progress bars (both linear and circular)
-- Custom color theming system with `DayTracerBlue` brand color
-- Translucent navigation and tab bars with custom appearance
+- Drain-style progress bars (`DrainBarView`): remaining time glows amber, spent time is dark with a hatched texture
+- All styling goes through `DS` design tokens (`DesignTokens.swift`); the app is locked to dark mode (`preferredColorScheme(.dark)` in ContentView) with amber as the single accent/tint
+- Numerals are always monospaced so continuously ticking digits don't shift layout
 
 ### Firebase Integration
 - Google Sign-In authentication configured in AppDelegate

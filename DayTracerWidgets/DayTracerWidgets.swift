@@ -122,7 +122,8 @@ struct DayTracerWidgets: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             DayTracerWidgetsEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                // ホーム画面はダークな盤面色で固定。ロック画面（アクセサリ）はシステムが描画を上書きする。
+                .containerBackground(DS.Colors.panel, for: .widget)
         }
         .supportedFamilies([
             .systemSmall, .systemMedium, .systemLarge,
@@ -133,21 +134,21 @@ struct DayTracerWidgets: Widget {
 
 // MARK: - ロック画面（アクセサリ）ウィジェット
 
-/// ロック画面の円形：今日の進捗ゲージ
+/// ロック画面の円形：今日の「残量」ゲージ
 struct DayTracerWidgetsCircularView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        Gauge(value: entry.dayProgress) {
-            Text("Day")
+        Gauge(value: 1 - entry.dayProgress) {
+            Text("残")
         } currentValueLabel: {
-            Text("\(Int(entry.dayProgress * 100))")
+            Text("\(Int((1 - entry.dayProgress) * 100))")
         }
         .gaugeStyle(.accessoryCircularCapacity)
     }
 }
 
-/// ロック画面の長方形：時刻＋今日/年の進捗
+/// ロック画面の長方形：時刻＋今日/年の残量
 struct DayTracerWidgetsRectangularView: View {
     var entry: Provider.Entry
 
@@ -155,24 +156,24 @@ struct DayTracerWidgetsRectangularView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(AppSettings.timeString(from: entry.date))
                 .font(.headline)
-            Gauge(value: entry.dayProgress) {
+            Gauge(value: 1 - entry.dayProgress) {
                 Text("Day")
             } currentValueLabel: {
-                Text("\(Int(entry.dayProgress * 100))%")
+                Text("残り\(Int((1 - entry.dayProgress) * 100))%")
             }
             .gaugeStyle(.accessoryLinearCapacity)
-            Text("Year \(Int(entry.yearProgress * 100))%")
+            Text(String(format: "Year 残り%.2f%%", (1 - entry.yearProgress) * 100))
                 .font(.caption2)
         }
     }
 }
 
-/// ロック画面のインライン（時計の上）：日/年の進捗を1行で
+/// ロック画面のインライン（時計の上）：日/年の残量を1行で
 struct DayTracerWidgetsInlineView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        Text("Day \(Int(entry.dayProgress * 100))% · Year \(Int(entry.yearProgress * 100))%")
+        Text("Day残\(Int((1 - entry.dayProgress) * 100))% · Year残\(Int((1 - entry.yearProgress) * 100))%")
     }
 }
 

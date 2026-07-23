@@ -102,6 +102,74 @@ final class ProgressCalculatorsTests: XCTestCase {
         XCTAssertNotEqual(sundayStart, mondayStart)
     }
 
+    // MARK: - 期間ヘルパー（ウィジェットの timerInterval 用）
+
+    func testDayInterval_matchesProgressBoundaries() {
+        let date = makeDate(year: 2024, month: 6, day: 15, hour: 10, minute: 30)
+        let interval = ProgressCalculators.dayInterval(for: date)
+        XCTAssertEqual(interval.start, calendar.startOfDay(for: date))
+        XCTAssertEqual(ProgressCalculators.calculateDayProgress(for: interval.start), 0.0, accuracy: 1e-9)
+        // 期間内の進捗 = 経過秒 / 総秒 と一致する（バーと数値の境界がズレない）
+        let expected = date.timeIntervalSince(interval.start) / interval.duration
+        XCTAssertEqual(ProgressCalculators.calculateDayProgress(for: date), expected, accuracy: 1e-9)
+    }
+
+    func testYearInterval_spansExactlyOneYear() {
+        let date = makeDate(year: 2024, month: 6, day: 15)
+        let interval = ProgressCalculators.yearInterval(for: date)
+        XCTAssertEqual(interval.start, makeDate(year: 2024, month: 1, day: 1))
+        XCTAssertEqual(interval.end, makeDate(year: 2025, month: 1, day: 1))
+        XCTAssertEqual(ProgressCalculators.calculateYearProgress(for: interval.start), 0.0, accuracy: 1e-9)
+        XCTAssertEqual(ProgressCalculators.calculateYearProgress(for: interval.end), 1.0, accuracy: 1e-9)
+    }
+
+    func testMonthInterval_containsDate() {
+        let date = makeDate(year: 2024, month: 6, day: 15, hour: 12)
+        let interval = ProgressCalculators.monthInterval(for: date)
+        XCTAssertEqual(interval.start, makeDate(year: 2024, month: 6, day: 1))
+        XCTAssertEqual(interval.end, makeDate(year: 2024, month: 7, day: 1))
+        XCTAssertTrue(interval.contains(date))
+    }
+
+    func testWeekInterval_matchesWeekProgressBoundary() {
+        let date = makeDate(year: 2024, month: 6, day: 12, hour: 15)
+        let interval = ProgressCalculators.weekInterval(for: date)
+        XCTAssertEqual(ProgressCalculators.calculateWeekProgress(for: interval.start), 0.0, accuracy: 1e-9)
+        XCTAssertEqual(interval.duration, 7 * 86400, accuracy: 3600 * 2) // DST を跨いでも±2h以内
+    }
+
+    // MARK: - 「残り」表示ヘルパー
+
+    func testRemainingTimeOfYear_oneSecondBeforeYearEnd() {
+        let almostEnd = makeDate(year: 2024, month: 12, day: 31, hour: 23, minute: 59, second: 59)
+        let remaining = ProgressCalculators.remainingTimeOfYear(for: almostEnd)
+        XCTAssertEqual(remaining.days, 0)
+        XCTAssertEqual(remaining.hours, 0)
+        XCTAssertEqual(remaining.minutes, 0)
+        XCTAssertEqual(remaining.seconds, 1)
+    }
+
+    func testRemainingTimeOfYear_atStartOfLastDay() {
+        let lastDay = makeDate(year: 2023, month: 12, day: 31)
+        let remaining = ProgressCalculators.remainingTimeOfYear(for: lastDay)
+        XCTAssertEqual(remaining.days, 1)
+        XCTAssertEqual(remaining.hours, 0)
+    }
+
+    func testDayOfYear_and_daysInYear() {
+        XCTAssertEqual(ProgressCalculators.dayOfYear(for: makeDate(year: 2024, month: 1, day: 1)), 1)
+        XCTAssertEqual(ProgressCalculators.dayOfYear(for: makeDate(year: 2023, month: 12, day: 31)), 365)
+        XCTAssertEqual(ProgressCalculators.daysInYear(for: makeDate(year: 2024, month: 6, day: 1)), 366) // うるう年
+        XCTAssertEqual(ProgressCalculators.daysInYear(for: makeDate(year: 2023, month: 6, day: 1)), 365)
+    }
+
+    func testDayWeightOfYear() {
+        XCTAssertEqual(ProgressCalculators.dayWeightOfYear(for: makeDate(year: 2024, month: 6, day: 1)),
+                       1.0 / 366.0, accuracy: 1e-12)
+        XCTAssertEqual(ProgressCalculators.dayWeightOfYear(for: makeDate(year: 2023, month: 6, day: 1)),
+                       1.0 / 365.0, accuracy: 1e-12)
+    }
+
     // MARK: - 範囲チェック
 
     func testAllProgressValues_areWithinValidRange() {

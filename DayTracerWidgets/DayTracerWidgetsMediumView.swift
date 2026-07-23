@@ -2,62 +2,65 @@
 //  DayTracerWidgetsMidiumView.swift
 //  DayTracerWidgetsExtension
 //
-//  Created by murate on 2023/12/10.
+//  中ウィジェット: 時計＋年の残り%＋今日の残りカウントダウン（毎秒、システム駆動）。
 //
 
 import SwiftUI
+import WidgetKit
 
 struct DayTracerWidgetsMediumView: View {
     var entry: Provider.Entry
-    let currentYear = String(Calendar.current.component(.year, from: Date()))
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                // 左上に時間と曜日、日付とノートを縦方向に積み上げ
-                VStack(alignment: .leading) {
+        let yearRemaining = (1 - entry.yearProgress) * 100
+        let dayInterval = ProgressCalculators.dayInterval(for: entry.date)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(AppSettings.timeString(from: entry.date))
-                        .font(.system(size: 32, weight: .bold, design: .default))
-                        .padding(.leading, 20)
+                        .font(DS.Fonts.numeral(28))
+                        .foregroundStyle(DS.Colors.numeral)
                     Text(entry.date.formattedAsDayMonthDate())
-                        .font(.system(size: 18, weight: .regular, design: .default))
-                        .padding(.leading, 20)
-
-                    // ノートを取るためのボタン（タップで Notes タブを開く）
-                    Link(destination: URL(string: "daytracer://notes")!) {
-                        HStack {
-                            Image(systemName: "pencil")
-                                .foregroundColor(Color(UIColor.secondaryLabel))
-                            Text("Take Notes         ")
-                                .font(.system(size: 18, weight: .regular, design: .default))
-                                .foregroundColor(Color(UIColor.secondaryLabel))
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(Color(UIColor.systemGray3))
-                    .padding(.horizontal)
+                        .font(DS.Fonts.date)
+                        .foregroundStyle(DS.Colors.label)
                 }
-
-                // 今日の24時間の進捗を表示する円形プログレスバー
-                ZStack {
-                    CustomCircleProgressGradientView(progress: entry.dayProgress, gradient: Gradient(colors: [entry.selectedSubColor.opacity(0.55), entry.selectedColor]), size: 75)
-                    Text("\(Int(entry.dayProgress * 100))%")
-                        .font(.system(size: 20, weight: .bold, design: .default))
-                        .frame(height: 20, alignment: .center)
+                Spacer()
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("YEAR 残り")
+                        .font(DS.Fonts.sectionLabel)
+                        .foregroundStyle(DS.Colors.label)
+                    Text(String(format: "%.4f%%", yearRemaining))
+                        .font(DS.Fonts.numeral(22))
+                        .foregroundStyle(DS.Colors.remaining)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                 }
             }
 
-            // 年間の進捗を表示する線形プログレスバー
-            ZStack(alignment: .center) {
-                CustomLinearProgressGradientView(progress: entry.yearProgress, gradient: Gradient(colors: [entry.selectedSubColor.opacity(0.55), entry.selectedColor]))
-                    .frame(height: 20)
+            DrainBarView(progress: entry.yearProgress)
+                .frame(height: DS.Metrics.barHeightThin)
 
-                Text("\(currentYear) : \(entry.yearProgress * 100, specifier: "%.2f")% Complete")
-                    .font(.system(size: 14, weight: .bold, design: .default))
-                    .frame(height: 20, alignment: .center)
+            HStack(spacing: 8) {
+                Text("DAY 残り")
+                    .font(DS.Fonts.sectionLabel)
+                    .foregroundStyle(DS.Colors.label)
+                Text(timerInterval: dayInterval.start...dayInterval.end, countsDown: true)
+                    .font(DS.Fonts.numeral(15))
+                    .foregroundStyle(DS.Colors.numeral)
+                    .lineLimit(1)
+                    .frame(width: 84, alignment: .leading)
+                ProgressView(timerInterval: dayInterval.start...dayInterval.end, countsDown: true) {
+                } currentValueLabel: {
+                }
+                .progressViewStyle(.linear)
+                .tint(DS.Colors.remaining)
+
+                Link(destination: URL(string: "daytracer://notes")!) {
+                    Image(systemName: "pencil.line")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(DS.Colors.remaining)
+                }
             }
-            .padding(.horizontal)
         }
     }
 }

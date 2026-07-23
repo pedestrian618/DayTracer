@@ -17,25 +17,6 @@ final class AppRouter: ObservableObject {
 struct ContentView: View {
     @EnvironmentObject private var router: AppRouter
 
-    init() {
-        // Customizing navigation and tab bars to match the blue theme of the app icon
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(named: "DayTracerBlue") // Custom blue color
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-
-        // Set navigation and tab bars to be translucent with blur effect
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().compactAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        UINavigationBar.appearance().tintColor = .white
-        UITabBar.appearance().backgroundImage = UIImage()
-        UITabBar.appearance().shadowImage = UIImage()
-        UITabBar.appearance().backgroundColor = UIColor(named: "DayTracerBlue")?.withAlphaComponent(0.5)
-        UITabBar.appearance().isTranslucent = true
-        UITabBarItem.appearance().setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
-    }
-
     var body: some View {
         TabView(selection: $router.selectedTab) {
             HomeView()
@@ -56,6 +37,9 @@ struct ContentView: View {
                 }
                 .tag(AppRouter.Tab.settings)
         }
+        // 計器盤の世界観としてアプリ全体をダーク固定。差し色（アンバー）を唯一のアクセントにする。
+        .preferredColorScheme(.dark)
+        .tint(DS.Colors.remaining)
     }
 }
 

@@ -2,65 +2,50 @@
 //  ProgressViews.swift
 //  DayTracer
 //
-//  Created by murate on 2023/12/10.
+//  進捗表示の共有コンポーネント。アプリ・ウィジェット両ターゲットで使う。
+//  「経過を積み上げる」のではなく「残量が削られていく」見せ方を担う。
 //
 
 import SwiftUI
 
-/// グラデーション付きの線形プログレスバー
-struct CustomLinearProgressGradientView: View {
-    var progress: Double // 0.0 ~ 1.0 の範囲でプログレスを表す
-    var gradient: Gradient // グラデーションを表すプロパティ
+/// 45°の斜線ハッチ。消費済み（もう戻らない）領域の質感に使う。
+struct StripedPattern: View {
+    var color: Color = DS.Colors.hatch
+    var lineWidth: CGFloat = 1
+    var gap: CGFloat = 4
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                // 背景のカプセル
-                Capsule().frame(width: geometry.size.width, height: 20)
-                    .foregroundColor(Color(UIColor.systemGray3))
-                    .opacity(0.3)
-
-                // プログレスを表示するカプセル
-                Capsule().frame(width: CGFloat(progress) * geometry.size.width, height: 20)
-                    .foregroundColor(Color.clear)
-                    .background(
-                        LinearGradient(gradient: gradient, startPoint: .leading, endPoint: .trailing)
-                    )
-                    .mask(Capsule())
-                    .animation(Animation.linear(duration: 0.2), value: progress)
+        Canvas { context, size in
+            let step = lineWidth + gap
+            var x: CGFloat = -size.height
+            while x < size.width {
+                var path = Path()
+                path.move(to: CGPoint(x: x, y: size.height))
+                path.addLine(to: CGPoint(x: x + size.height, y: 0))
+                context.stroke(path, with: .color(color), lineWidth: lineWidth)
+                x += step
             }
         }
-        .cornerRadius(10)
     }
 }
 
-/// グラデーション付きの円形プログレスバー
-struct CustomCircleProgressGradientView: View {
+/// 「残量」が主役のバー。左（消費済み）は暗いハッチ、右（残り）だけがアンバーに光る。
+/// `progress` は経過率 0.0〜1.0。残量側の幅 = (1 - progress)。
+struct DrainBarView: View {
     var progress: Double
-    var gradient: Gradient // グラデーションを表すプロパティ
-    var size: CGFloat
 
     var body: some View {
-        ZStack {
-            // 背景の円
-            Circle()
-                .stroke(lineWidth: size * 0.1)
-                .foregroundColor(Color(UIColor.systemGray5))
-
-            // プログレスの円
-            Circle()
-                .trim(from: 0, to: CGFloat(progress))
-                .stroke(
-                    AngularGradient(
-                        gradient: gradient,
-                        center: .center,
-                        startAngle: .degrees(0), // 始点の角度を0度に設定
-                        endAngle: .degrees(360 * progress) // 終点の角度を動的に設定
-                    ),
-                    style: StrokeStyle(lineWidth: size * 0.1, lineCap: .round)
-                )
-                .rotationEffect(Angle(degrees: -90)) // 12時の位置から始める
+        GeometryReader { geometry in
+            let clamped = CGFloat(min(max(progress, 0), 1))
+            let spentWidth = clamped * geometry.size.width
+            HStack(spacing: 0) {
+                DS.Colors.spent
+                    .overlay(StripedPattern())
+                    .frame(width: spentWidth)
+                DS.Colors.remaining
+                    .frame(width: geometry.size.width - spentWidth)
+            }
+            .clipShape(Capsule())
         }
-        .frame(width: size, height: size)
     }
 }

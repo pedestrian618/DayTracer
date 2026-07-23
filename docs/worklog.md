@@ -7,6 +7,20 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 
 ---
 
+## 2026-07-23
+
+### UI・プロダクト再設計フェーズ1: 「残り時間の計器盤」化
+- **概要**: コンセプトを「経過率の表示」から「残量（残り時間）の計器盤」へ再定義し、ホーム画面とウィジェット全サイズを刷新。masume のデザイン運用（単一トークン enum・リテラル禁止・両ターゲット共有）を輸入しつつ、世界観は対極（ダーク盤面・等幅数字・アンバー単色）に振った。
+- **詳細**:
+  - `DesignTokens.swift`（新規・両ターゲット共有、`project.pbxproj` 手編集で登録）: `DS.Colors / Fonts / Metrics`。
+  - `ProgressViews.swift`: `DrainBarView`（消費済み=暗い斜線ハッチ、残量=アンバー）と `StripedPattern` に刷新。旧グラデーションバー/リングは全用途置き換えのため削除。
+  - `HomeView` 全面書き換え: ヒーロー=年の残り%（小数6桁、`TimelineView(.animation)` 約20fps）＋「残り◯日 hh:mm:ss」、DAY/WEEK/MONTH 残量バー（小数4桁）、365日グリッド（記録日=アンバー/経過=暗色/今日=白/未来=輪郭）、使途記録（各記録に「= 年の0.27%」の重み）。
+  - `ContentView`: 旧ブルーテーマの UIAppearance を削除、`preferredColorScheme(.dark)` 固定＋アンバー tint。
+  - ウィジェット3サイズ刷新: `Text(timerInterval:)` / `ProgressView(timerInterval:countsDown:)` で今日の残りをタイムライン更新なしに毎秒駆動。ロック画面3種は「残り」表記へ反転。盤面色の `containerBackground`。
+  - `ProgressCalculators`: `dayInterval/weekInterval/monthInterval/yearInterval`、`remainingTimeOfYear`、`dayOfYear/daysInYear/dayWeightOfYear` を追加（テスト8件追加、計19件）。
+- **検証**: **未実施（要注意）**。実装環境（リモートLinux）に Xcode/Swift ツールチェーンが無く、`xcodebuild` によるビルド・テストを実行できなかった。次に Mac で開く際に必ず: 両ターゲットのビルド → テスト19件 → シミュレータでホーム/ウィジェット表示（特に `timerInterval` 系の描画と pbxproj 登録）を確認すること（課題 #9）。
+- **コミット**: （このエントリと同じコミット）
+
 ## 2026-06-21
 
 ### 表示設定（週の始まり・日付/時刻形式）
