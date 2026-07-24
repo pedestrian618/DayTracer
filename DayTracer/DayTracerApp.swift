@@ -7,32 +7,18 @@
 
 import SwiftUI
 import SwiftData
-import FirebaseCore
-import GoogleSignIn
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        FirebaseApp.configure()
-        _ = AuthenticationManager.shared // 認証状態の監視を起動時から有効化する
-        return true
-    }
-
-    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
-        return GIDSignIn.sharedInstance.handle(url)
-    }
-}
 
 @main
 struct DayTracerApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var router = AppRouter()
     @State private var showWelcomeScreen = true
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            DiaryRecord.self,
         ])
+        // CloudKit 同期を有効化する場合はここで cloudKitDatabase を指定する
+        // （エンタイトルメントに iCloud コンテナ ID の追加が必要）。
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
@@ -56,10 +42,10 @@ struct DayTracerApp: App {
                 handleDeepLink(url)
             }
         }
+        .modelContainer(sharedModelContainer)
     }
 
     /// ウィジェット等からの daytracer://notes を受けて Notes タブを開く。
-    /// （Google サインインのコールバックは AppDelegate 側で処理されるため scheme で振り分ける）
     private func handleDeepLink(_ url: URL) {
         guard url.scheme == "daytracer" else { return }
         if url.host == "notes" {

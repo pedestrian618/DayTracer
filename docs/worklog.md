@@ -7,7 +7,22 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 
 ---
 
-## 2026-07-23
+## 2026-07-24
+
+### フェーズ2: Firebase 依存の全撤去（オフラインファースト化）
+- **概要**: Firebase / Firestore / GoogleSignIn を依存ごと削除し、使途記録を SwiftData ローカル保存へ移行。ログイン概念を廃止し、外部パッケージ依存ゼロに。実機ビルドで出ていた gRPC-C++ の `CFBundleIdentifier` エラーも依存撤去により根治。
+- **詳細**:
+  - 新規 `DiaryRecord.swift`（SwiftData モデル、CloudKit 互換設計）。旧 `Item.swift` を置き換え（課題 #7 解消）。
+  - 削除: `AuthenticationManager.swift` / `DiaryRepository.swift`（Firestore 版）/ `LoginView` / `UserSettingsView` / `ProfileImageView` / AppDelegate（Firebase 初期化・GIDSignIn URL 処理）。
+  - `NotesView` 刷新: `@Query` + `modelContext` で CRUD、DS トークン適用、プロンプト「今日は年の◯%。何に使った？」。投稿/削除時に `SharedNoteStore` へ最新記録を書き `WidgetCenter.reloadAllTimelines()`。
+  - `HomeView`: `DiaryRepository` 経由の取得を `@Query` に置き換え（最新3件と365日グリッドの記録日）。
+  - `SettingsView`: 認証セクション削除、「データ」セクション（ローカル保存の説明）を追加。
+  - `DayTracerApp`: Firebase/GoogleSignIn 起動コード削除、スキーマを `DiaryRecord` に変更、`.modelContainer()` を WindowGroup に付与（従来は未注入だった）。
+  - `project.pbxproj`: firebase-ios-sdk / GoogleSignIn-iOS のパッケージ参照・プロダクト依存・Frameworks エントリ・GoogleService-Info.plist 参照を全削除。
+  - `Info.plist`: Google URL スキームと `UIBackgroundModes: remote-notification` を削除。
+  - 注意: 旧 Firestore 上の記録は移行していない（課題 #13）。CloudKit 同期は未有効化（課題 #14）。
+- **検証**: **未実施**（Linux 環境に Xcode なし、課題 #9 と同様）。Mac で要確認: 両ターゲットビルド → テスト19件 → 投稿/削除→ウィジェット反映、既存インストールからのアップデートで SwiftData ストアが正常に開くこと。
+- **コミット**: （このエントリと同じコミット）
 
 ### UI・プロダクト再設計フェーズ1: 「残り時間の計器盤」化
 - **概要**: コンセプトを「経過率の表示」から「残量（残り時間）の計器盤」へ再定義し、ホーム画面とウィジェット全サイズを刷新。masume のデザイン運用（単一トークン enum・リテラル禁止・両ターゲット共有）を輸入しつつ、世界観は対極（ダーク盤面・等幅数字・アンバー単色）に振った。

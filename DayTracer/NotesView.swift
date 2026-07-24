@@ -2,13 +2,14 @@
 //  NotesView.swift
 //  DayTracer
 //
-//  Created by murate on 2023/12/02.
+//  使途記録: 削られた1日（年の約0.27%）を何に使ったかを1行で残す。
+//  保存は SwiftData ローカル（Firestore 依存は 2026-07-24 撤去）。
+//  制約: 30文字上限・1日1件。投稿時に App Group へ最新記録を書き、ウィジェットへ反映する。
 //
 
-
 import SwiftUI
-import Firebase
-import FirebaseAuth
+import SwiftData
+import WidgetKit
 
 // MARK: - Date Extension
 extension Date {
@@ -22,186 +23,148 @@ extension Date {
     }
 }
 
-// MARK: - Diary Entry Model
-struct DiaryEntry: Identifiable {
-    var id: String
-    var text: String
-    var date: Date
-
-    init?(id: String, data: [String: Any]) {
-        guard let text = data["text"] as? String,
-              let timestamp = data["date"] as? Timestamp else { return nil }
-        self.id = id
-        self.text = text
-        self.date = timestamp.dateValue()
-    }
-}
-
-// MARK: - Diary Entry View
-struct DiaryEntryView: View {
-    var entry: DiaryEntry
-
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(entry.text)
-                    .font(.body)
-                Text(entry.date.formatted())
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-            Spacer()
-        }
-        .padding()
-    }
-}
-
 // MARK: - Notes View
 struct NotesView: View {
-    @State private var diaryEntries: [DiaryEntry] = []
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \DiaryRecord.date, order: .reverse) private var records: [DiaryRecord]
+
     @State private var newDiaryText: String = ""
-    @State private var errorMessage: String = ""
     @FocusState private var isTextFieldFocused: Bool
 
-    /// 「短い日記」を保つための1投稿あたりの最大文字数。
+    /// 「短い記録」を保つための1件あたりの最大文字数。
     private let maxNoteLength = 30
 
     var body: some View {
-        NavigationView {
-            VStack {
-                List {
-                    ForEach(diaryEntries) { entry in
-                        DiaryEntryView(entry: entry)
-                    }
-                    .onDelete(perform: deleteEntry)
+        NavigationStack {
+            VStack(spacing: 0) {
+                if records.isEmpty {
+                    emptyState
+                } else {
+                    recordList
                 }
-
                 inputArea
-
-                if !errorMessage.isEmpty {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .padding()
-                }
             }
-            .navigationTitle("Note")
+            .background(DS.Colors.panel.ignoresSafeArea())
+            .navigationTitle("使途記録")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Image("logoImage")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 40)
-                }
-            }
-            .onAppear(perform: loadDiaryEntries)
         }
     }
 
-    // MARK: - 入力エリア（短い日記の制約つき）
+    private var recordList: some View {
+        List {
+            ForEach(records) { record in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(record.text)
+                        .font(DS.Fonts.body)
+                        .foregroundStyle(DS.Colors.numeral)
+                    HStack {
+                        Text(record.date.formatted())
+                        Spacer()
+                        Text(String(format: "= 年の%.2f%%",
+                                    ProgressCalculators.dayWeightOfYear(for: record.date) * 100))
+                    }
+                    .font(DS.Fonts.caption)
+                    .foregroundStyle(DS.Colors.label)
+                }
+                .listRowBackground(DS.Colors.surface)
+            }
+            .onDelete(perform: deleteRecords)
+        }
+        .scrollContentBackground(.hidden)
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 8) {
+            Spacer()
+            Text("まだ記録がありません")
+                .font(DS.Fonts.body)
+                .foregroundStyle(DS.Colors.numeral)
+            Text("1日1行、30文字。その日を何に使ったかだけ残す。")
+                .font(DS.Fonts.caption)
+                .foregroundStyle(DS.Colors.label)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - 入力エリア（短い記録の制約つき）
     private var inputArea: some View {
         VStack(spacing: 4) {
             HStack {
-                TextField("Type your Note...", text: $newDiaryText)
+                TextField(todayPrompt, text: $newDiaryText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.vertical, 8)
                     .focused($isTextFieldFocused)
-                    .disabled(hasPostedToday())
+                    .disabled(hasPostedToday)
                     .onChange(of: newDiaryText) { _, newValue in
-                        // 文字数上限を超えたら切り詰める（短い日記の制約）
+                        // 文字数上限を超えたら切り詰める（短い記録の制約）
                         if newValue.count > maxNoteLength {
                             newDiaryText = String(newValue.prefix(maxNoteLength))
                         }
                     }
 
-                Button(action: addNewDiaryEntry) {
-                    Text("Post")
-                        .foregroundColor(.white)
+                Button(action: addNewRecord) {
+                    Text("記録")
+                        .font(DS.Fonts.caption)
+                        .foregroundStyle(DS.Colors.panel)
                         .padding(.vertical, 6)
                         .padding(.horizontal, 12)
-                        .background(Color.blue.opacity(0.7))
-                        .cornerRadius(8)
+                        .background(DS.Colors.remaining)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .disabled(newDiaryText.isEmpty || hasPostedToday())
+                .disabled(newDiaryText.isEmpty || hasPostedToday)
             }
 
             HStack {
-                if hasPostedToday() {
-                    Text("今日はもう投稿しました")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                if hasPostedToday {
+                    Text("今日の分は記録済み")
+                        .font(DS.Fonts.caption)
+                        .foregroundStyle(DS.Colors.label)
                 }
                 Spacer()
                 Text("\(newDiaryText.count)/\(maxNoteLength)")
-                    .font(.caption)
-                    .foregroundColor(newDiaryText.count >= maxNoteLength ? .orange : .gray)
+                    .font(DS.Fonts.caption)
+                    .foregroundStyle(newDiaryText.count >= maxNoteLength ? DS.Colors.remaining : DS.Colors.label)
             }
         }
         .padding(.horizontal)
         .padding(.bottom, 8)
     }
 
-    // MARK: - CRUD Operations
-    private func addNewDiaryEntry() {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-
-        let db = Firestore.firestore()
-        let newEntryRef = db.collection("diaryEntries").document()
-        let entryData: [String: Any] = [
-            "text": newDiaryText,
-            "date": Timestamp(date: Date()),
-            "userId": userId
-        ]
-
-        newEntryRef.setData(entryData) { error in
-            if let error = error {
-                errorMessage = "Error saving entry: \(error.localizedDescription)"
-            } else {
-                let newEntry = DiaryEntry(id: newEntryRef.documentID, data: entryData)
-                if let newEntry = newEntry {
-                    diaryEntries.insert(newEntry, at: 0)
-                    saveLatestDiaryEntryInSharedContainer(entry: newEntry)
-                    newDiaryText = ""
-                    isTextFieldFocused = false
-                }
-            }
-        }
+    /// 入力プロンプト: 今日が年に占める重みを添えて問いかける。
+    private var todayPrompt: String {
+        String(format: "今日は年の%.2f%%。何に使った？",
+               ProgressCalculators.dayWeightOfYear(for: Date()) * 100)
     }
 
-    private func loadDiaryEntries() {
-        DiaryRepository().fetchLatest { result in
-            switch result {
-            case .success(let entries):
-                diaryEntries = entries
-            case .failure(let error):
-                errorMessage = "Error loading entries: \(error.localizedDescription)"
-            }
-        }
+    // MARK: - CRUD
+
+    private func addNewRecord() {
+        modelContext.insert(DiaryRecord(text: newDiaryText))
+        newDiaryText = ""
+        isTextFieldFocused = false
+        syncLatestToWidget()
     }
 
-    private func deleteEntry(at offsets: IndexSet) {
-        offsets.forEach { index in
-            let entry = diaryEntries[index]
-            deleteDiaryEntry(entryId: entry.id)
-            diaryEntries.remove(at: index)
-        }
+    private func deleteRecords(at offsets: IndexSet) {
+        offsets.forEach { modelContext.delete(records[$0]) }
+        syncLatestToWidget()
     }
 
-    private func deleteDiaryEntry(entryId: String) {
-        Firestore.firestore().collection("diaryEntries").document(entryId).delete { error in
-            if let error = error {
-                errorMessage = "Error deleting entry: \(error.localizedDescription)"
-            }
-        }
-    }
-
-    /// 1日1投稿の制約: 最新エントリの日付が今日なら true。
-    private func hasPostedToday() -> Bool {
-        guard let latest = diaryEntries.first else { return false }
+    /// 1日1件の制約: 最新記録の日付が今日なら true。
+    private var hasPostedToday: Bool {
+        guard let latest = records.first else { return false }
         return latest.date.isSameDay(as: Date())
     }
 
-    private func saveLatestDiaryEntryInSharedContainer(entry: DiaryEntry) {
-        SharedNoteStore().saveLatestNote(text: entry.text, date: entry.date.formatted())
+    /// App Group の共有コンテナへ最新記録を書き、ウィジェットのタイムラインを更新する。
+    /// modelContext から直接引くので、直前の insert / delete も反映される。
+    private func syncLatestToWidget() {
+        var descriptor = FetchDescriptor<DiaryRecord>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+        descriptor.fetchLimit = 1
+        let latest = (try? modelContext.fetch(descriptor))?.first
+        SharedNoteStore().saveLatestNote(text: latest?.text ?? "",
+                                         date: latest.map { $0.date.formatted() } ?? "")
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

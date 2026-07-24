@@ -46,5 +46,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(AppRouter())
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: DiaryRecord.self, inMemory: true)
 }

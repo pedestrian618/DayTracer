@@ -1,12 +1,24 @@
 import SwiftUI
+import SwiftData
 
 /// ホーム = 「残り時間の計器盤」。
 /// 主役は年の残り%（小数6桁・常時駆動）。日/週/月は残量バー、下部に365日グリッドと使途記録。
 struct HomeView: View {
     @EnvironmentObject private var router: AppRouter
-    @State private var latestEntries: [DiaryEntry] = []
+    @Query(sort: \DiaryRecord.date, order: .reverse) private var records: [DiaryRecord]
+
+    private var latestEntries: [DiaryRecord] { Array(records.prefix(3)) }
+
     /// 今年の記録済み日（通算日）の集合。年間グリッドの塗り分けに使う。
-    @State private var recordedDays: Set<Int> = []
+    private var recordedDays: Set<Int> {
+        let calendar = Calendar.current
+        let thisYear = calendar.component(.year, from: Date())
+        return Set(
+            records.lazy
+                .filter { calendar.component(.year, from: $0.date) == thisYear }
+                .map { ProgressCalculators.dayOfYear(for: $0.date) }
+        )
+    }
 
     var body: some View {
         ScrollView {
@@ -28,7 +40,6 @@ struct HomeView: View {
             .padding(DS.Metrics.screenPadding)
         }
         .background(DS.Colors.panel.ignoresSafeArea())
-        .onAppear(perform: loadEntries)
     }
 
     private func header(now: Date) -> some View {
@@ -110,7 +121,8 @@ struct HomeView: View {
         let now = Date()
         let today = ProgressCalculators.dayOfYear(for: now)
         let total = ProgressCalculators.daysInYear(for: now)
-        let recordedCount = recordedDays.filter { $0 <= today }.count
+        let recorded = recordedDays // 集合の構築は1回だけ（セル毎に再計算しない）
+        let recordedCount = recorded.filter { $0 <= today }.count
         let columns = Array(
             repeating: GridItem(.flexible(), spacing: DS.Metrics.yearGridGap),
             count: DS.Metrics.yearGridColumns
@@ -128,7 +140,7 @@ struct HomeView: View {
             }
             LazyVGrid(columns: columns, spacing: DS.Metrics.yearGridGap) {
                 ForEach(1...total, id: \.self) { day in
-                    dayCell(day: day, today: today)
+                    dayCell(day: day, today: today, recorded: recorded)
                 }
             }
             HStack(spacing: 12) {
@@ -139,14 +151,14 @@ struct HomeView: View {
         }
     }
 
-    private func dayCell(day: Int, today: Int) -> some View {
+    private func dayCell(day: Int, today: Int, recorded: Set<Int>) -> some View {
         let shape = RoundedRectangle(cornerRadius: 1.5)
         return Group {
             if day == today {
                 shape.fill(DS.Colors.numeral)
             } else if day > today {
                 shape.strokeBorder(DS.Colors.line, lineWidth: 0.5)
-            } else if recordedDays.contains(day) {
+            } else if recorded.contains(day) {
                 shape.fill(DS.Colors.remaining.opacity(0.85))
             } else {
                 shape.fill(DS.Colors.spent)
@@ -241,24 +253,5 @@ struct HomeView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = (AppSettings.timeFormat == .twentyFour) ? "H:mm" : "h:mm"
         return formatter.string(from: date)
-    }
-
-    private func loadEntries() {
-        // 最新3件は使途記録の一覧に、全件の日付は年間グリッドの塗りに使う。
-        DiaryRepository().fetchLatest { result in
-            guard case .success(let entries) = result else {
-                latestEntries = []
-                recordedDays = []
-                return
-            }
-            latestEntries = Array(entries.prefix(3))
-            let calendar = Calendar.current
-            let thisYear = calendar.component(.year, from: Date())
-            recordedDays = Set(
-                entries.lazy
-                    .filter { calendar.component(.year, from: $0.date) == thisYear }
-                    .map { ProgressCalculators.dayOfYear(for: $0.date) }
-            )
-        }
     }
 }

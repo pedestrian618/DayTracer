@@ -25,8 +25,8 @@ DayTracer is an iOS SwiftUI application that visualizes time being spent — a "
 - **SwiftUI**: Primary UI framework
 - **SwiftData**: Core Data successor for local data persistence
 - **WidgetKit**: iOS home screen widgets with multiple sizes (small, medium, large)
-- **Firebase**: Authentication (Google Sign-In) and backend services
 - **App Groups**: Shared data between main app and widget extension (`group.junkyfly.daytracer.notes`)
+- **No external packages**: Firebase / Firestore / GoogleSignIn were fully removed on 2026-07-24. Apple frameworks only. Do not re-introduce third-party dependencies casually.
 
 ## Documentation Maintenance (IMPORTANT)
 
@@ -46,15 +46,15 @@ DayTracer is an iOS SwiftUI application that visualizes time being spent — a "
 ## Architecture
 
 ### Core App Structure
-- **DayTracerApp.swift**: Main app entry point with Firebase configuration and welcome screen logic
-- **ContentView.swift**: Tab-based navigation container (Home, Notes, Settings)
-- **Item.swift**: SwiftData model for persistent storage
+- **DayTracerApp.swift**: Main app entry point; builds the SwiftData `ModelContainer` (schema: `DiaryRecord`) and handles the `daytracer://notes` deep link
+- **ContentView.swift**: Tab-based navigation container (Home, Notes, Settings), locked to dark mode
+- **DiaryRecord.swift**: SwiftData model for the time-spend log (local storage; CloudKit-compatible design, sync not yet enabled)
 
 ### Main Views
-- **HomeView.swift**: Dashboard displaying real-time progress calculations and latest notes
-- **NotesView.swift**: Diary/notes management interface
+- **HomeView.swift**: The instrument panel — remaining-year hero number, drain bars, 365-day grid, latest log entries (via `@Query`)
+- **NotesView.swift**: Time-spend log CRUD via SwiftData (`@Query` + `modelContext`); 30-char limit, one entry per day; syncs the latest entry to the App Group and reloads widget timelines
 - **WelcomeView.swift**: Initial onboarding screen
-- **SettingsView.swift**: App configuration
+- **SettingsView.swift**: Display settings (week start, date/time format) shared with widgets; no auth
 
 ### Progress System
 - **ProgressCalculators.swift**: Centralized logic for day/week/month/year progress, plus `DateInterval` helpers (`dayInterval` etc.) for widget `timerInterval` APIs and "remaining" helpers (`remainingTimeOfYear`, `dayOfYear`, `daysInYear`, `dayWeightOfYear`)
@@ -93,7 +93,7 @@ Widgets are built as a separate extension target and require:
 
 ### Progress Calculations
 - All progress calculations are handled by `ProgressCalculators` utility class
-- Real-time updates occur every second in HomeView via Timer.publish
+- HomeView drives continuous updates with `TimelineView` (clock at 1s, hero number/bars at ~20fps); widgets use system-driven `timerInterval` APIs
 - Progress values are between 0.0 and 1.0
 
 ### Custom UI Components
@@ -101,7 +101,7 @@ Widgets are built as a separate extension target and require:
 - All styling goes through `DS` design tokens (`DesignTokens.swift`); the app is locked to dark mode (`preferredColorScheme(.dark)` in ContentView) with amber as the single accent/tint
 - Numerals are always monospaced so continuously ticking digits don't shift layout
 
-### Firebase Integration
-- Google Sign-In authentication configured in AppDelegate
-- Firebase configuration occurs in application launch
-- Authentication state managed through AuthenticationManager.swift
+### Data & Persistence
+- Diary/log entries live in SwiftData (`DiaryRecord`), local-only; device migration works via iCloud backup/device transfer
+- No authentication anywhere — the app must remain fully usable without any account
+- CloudKit sync is the planned next step (issue #14 in `docs/overview.md`): create the iCloud container, add its ID to the entitlements, pass `cloudKitDatabase: .automatic` to `ModelConfiguration`
