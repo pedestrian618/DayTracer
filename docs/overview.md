@@ -45,10 +45,10 @@ DayTracer は、**「残り時間の計器盤」**。1日・1週・1ヶ月・1�
 
 **2026-07-24 に Firebase / Firestore / GoogleSignIn を全撤去し、オフラインファーストへ移行。** 外部依存ゼロ（Apple 純正フレームワークのみ）。
 
-1. **SwiftData (`DiaryRecord`)** — 使途記録の本体。`{ text: String, date: Date }`。`DayTracerApp` が `ModelContainer` を構築し `.modelContainer()` で注入、各 View は `@Query` / `modelContext` で読み書き。**CloudKit 互換設計**（全プロパティにデフォルト値・ユニーク制約なし）だが、同期はまだ有効化していない（下記 課題 #14）。旧 `Item` モデルは置き換えて廃止（課題 #7 解消）。
+1. **SwiftData (`DiaryRecord`) + CloudKit 同期（2026-07-24 有効化）** — 使途記録の本体。`{ text: String, date: Date }`（全プロパティにデフォルト値・ユニーク制約なし = CloudKit 要件）。`DayTracerApp` が `cloudKitDatabase: .private("iCloud.com.junkyfly.DayTracer")` 付きの `ModelContainer` を構築し `.modelContainer()` で注入、各 View は `@Query` / `modelContext` で読み書き。iCloud 未サインインでもローカル保存として動作し、サインインすれば自動同期。コンテナ ID は両 entitlements（Debug/Release）に登録済み。`UIBackgroundModes: remote-notification` は CloudKit のサイレントプッシュ受信用に再追加。旧 `Item` モデルは置き換えて廃止（課題 #7 解消）。
 2. **App Group 共有 UserDefaults** — `group.junkyfly.daytracer.notes`。キー `latestNoteText` / `latestNoteDate` に最新記録を保存し、ウィジェットへ受け渡す。**アクセスは `SharedConfig`（suite 名・キー名）と `SharedNoteStore`（read/write）に集約**。投稿・削除時に `WidgetCenter.reloadAllTimelines()` で即時反映。表示設定（週の始まり・日付/時刻形式）も同じ共有 UserDefaults に `AppSettings` 経由で保存し、両ターゲットが参照。
 
-端末交換時: ローカルの SwiftData ストアは iCloud バックアップ／クイックスタート転送に含まれるため、新端末に復元される。常時同期・複数端末は CloudKit 有効化（課題 #14）で対応予定。
+端末交換時: CloudKit 同期により、同じ Apple ID でサインインすれば新端末に自動復元される（加えてローカルストア自体も iCloud バックアップ対象）。
 
 ---
 
@@ -115,7 +115,8 @@ masume の運用（単一トークン enum＋リテラル禁止）を輸入し�
 | 11 | **WelcomeView / NotesView / SettingsView が新世界観に未追随** — ダーク固定にはなるが、トークン（DS）未適用でトーンが揃っていない。文言も英日混在のまま。 | 世界観の不統一 | 中 |
 | 12 | **365日グリッドの「今日」が日付跨ぎで自動更新されない** — グリッドは `onAppear` 時の日付で描画（毎フレーム再描画を避けるため）。0時を跨いだら再表示まで前日のまま。 | 表示のズレ（軽微） | 低 |
 | 13 | **旧 Firestore の日記データは移行していない** — Firebase 撤去（2026-07-24）により、既存ユーザーの Firestore 上の記録はアプリから見えなくなる。必要なら Firebase コンソールからエクスポートして手動取り込み（または撤去前コミットで一時的に読み出し）。 | 既存データの引き継ぎ | 中 |
-| 14 | **CloudKit 同期が未有効化** — `DiaryRecord` は CloudKit 互換設計、エンタイトルメントにも iCloud(CloudKit) 項目はあるが、コンテナ ID が空で `ModelConfiguration` もローカルのみ。有効化には Developer ポータルでコンテナ作成 → entitlements に ID 追加 → `cloudKitDatabase: .automatic` 指定。 | 複数端末同期なし（バックアップ経由の移行のみ） | 中 |
+| 14 | ~~**CloudKit 同期が未有効化**~~ — ✅ 2026-07-24 有効化。コンテナ `iCloud.com.junkyfly.DayTracer` を作成し、entitlements＋`cloudKitDatabase: .private` を設定。 | 複数端末同期なし | ✅ 解消 |
+| 15 | **CloudKit スキーマの Production 未デプロイ** — Development 環境のスキーマは Debug 実行時に自動生成されるが、**TestFlight / App Store 配布前に CloudKit Console で「Deploy Schema Changes to Production」が必須**。忘れると本番ビルドだけ同期しない。 | リリース時の同期不能 | **高（リリース前必須）** |
 
 ---
 
@@ -173,7 +174,7 @@ masume の運用（単一トークン enum＋リテラル禁止）を輸入し�
 
 ## 9. 今後の改善候補（メモ）
 
-- ~~**保存方式の方針**: オフラインファースト＋任意ログイン~~ — ✅ 2026-07-24 実現（SwiftData ローカル保存・ログイン概念ごと廃止）。次の一手は **CloudKit 同期の有効化**（課題 #14）。ログイン UI 不要のまま複数端末同期になる。
+- ~~**保存方式の方針**: オフラインファースト＋任意ログイン~~ — ✅ 2026-07-24 実現（SwiftData ローカル保存・ログイン概念ごと廃止）。~~CloudKit 同期の有効化~~ も同日完了。**リリース前の Production スキーマデプロイだけ残っている（課題 #15）**。
 - 課題 #13: 旧 Firestore データの移行手段（必要になったら検討）。
 - ~~**「短い日記」の仕様を `NotesView` に取り込む**~~ — ✅ 2026-06-20 実装（30文字上限・1日1投稿・文字数カウンタ）。次の候補は気分（emoji）タグ・編集/検索・カレンダー表示。
 - **NotesView を「使途記録」として刷新**: 入力プロンプトを「今日は年の0.27%。何に使った？」に、DS トークン適用、記録率（経過日のうち記録できた日の割合）の表示。ホームの365日グリッドとの往復導線。

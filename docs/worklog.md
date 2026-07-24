@@ -9,6 +9,17 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 
 ## 2026-07-24
 
+### フェーズ3: CloudKit 同期の有効化
+- **概要**: 使途記録（SwiftData `DiaryRecord`）に CloudKit private database 同期を追加。ログイン UI なしのまま、iCloud サインイン中の端末間で自動同期・自動復元になる。
+- **詳細**:
+  - コンテナ `iCloud.com.junkyfly.DayTracer` を Xcode から登録（本人作業。初回は名前末尾の混入スペースで登録に失敗 → 手打ちで再登録して解消）。
+  - 両 entitlements（`DayTracer.entitlements` / `DayTracerDebug.entitlements`）の `icloud-container-identifiers` にコンテナ ID を追加。
+  - `DayTracerApp`: `ModelConfiguration` に `cloudKitDatabase: .private("iCloud.com.junkyfly.DayTracer")` を指定。
+  - `Info.plist`: `UIBackgroundModes: remote-notification` を再追加（CloudKit のサイレントプッシュ受信用。Firebase 撤去時に削除していたもの）。
+  - `SettingsView` のデータ説明を「この端末 + iCloud」に更新。
+- **検証**: 未実施（Linux 環境、課題 #9 と同様）。Mac で要確認: Debug ビルド → 記録を1件保存 → CloudKit Console の Development 環境に `CD_DiaryRecord` レコード型が生成されること → 可能なら2台目端末で同期確認。**リリース前に Production へのスキーマデプロイ必須（課題 #15・新規）**。
+- **コミット**: （このエントリと同じコミット）
+
 ### フェーズ2: Firebase 依存の全撤去（オフラインファースト化）
 - **概要**: Firebase / Firestore / GoogleSignIn を依存ごと削除し、使途記録を SwiftData ローカル保存へ移行。ログイン概念を廃止し、外部パッケージ依存ゼロに。実機ビルドで出ていた gRPC-C++ の `CFBundleIdentifier` エラーも依存撤去により根治。
 - **詳細**:

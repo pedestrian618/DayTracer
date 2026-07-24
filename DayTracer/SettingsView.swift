@@ -4,7 +4,7 @@
 //
 //  表示設定（アプリ・ウィジェット共通）。
 //  認証・アカウント機能は 2026-07-24 の Firebase 撤去で削除した。
-//  データはローカル保存（iCloud バックアップで端末移行）。CloudKit 同期は今後の候補。
+//  データは SwiftData + CloudKit（private DB）。未サインインでもローカル保存として動く。
 //
 
 import SwiftUI
@@ -31,8 +31,8 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: Text("データ"), footer: Text("使途記録はこの端末に保存されます。iCloudバックアップ／端末間転送で新しい端末へ引き継がれます。")) {
-                    LabeledContent("保存先", value: "この端末（ローカル）")
+                Section(header: Text("データ"), footer: Text("使途記録はこの端末に保存され、iCloudサインイン中は自動で同期・バックアップされます。アカウント登録は不要です。")) {
+                    LabeledContent("保存先", value: "この端末 + iCloud")
                 }
             }
             .navigationTitle("Settings")

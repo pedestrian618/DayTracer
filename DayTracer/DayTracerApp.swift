@@ -17,9 +17,13 @@ struct DayTracerApp: App {
         let schema = Schema([
             DiaryRecord.self,
         ])
-        // CloudKit 同期を有効化する場合はここで cloudKitDatabase を指定する
-        // （エンタイトルメントに iCloud コンテナ ID の追加が必要）。
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        // CloudKit 同期（private database）。未サインイン端末ではローカル保存として動き、
+        // サインインすれば自動で同期される。コンテナ ID は entitlements と一致させること。
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .private("iCloud.com.junkyfly.DayTracer")
+        )
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])

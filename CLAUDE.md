@@ -102,6 +102,7 @@ Widgets are built as a separate extension target and require:
 - Numerals are always monospaced so continuously ticking digits don't shift layout
 
 ### Data & Persistence
-- Diary/log entries live in SwiftData (`DiaryRecord`), local-only; device migration works via iCloud backup/device transfer
+- Diary/log entries live in SwiftData (`DiaryRecord`) with CloudKit private-database sync (container `iCloud.com.junkyfly.DayTracer`); works offline / signed-out as plain local storage
 - No authentication anywhere — the app must remain fully usable without any account
-- CloudKit sync is the planned next step (issue #14 in `docs/overview.md`): create the iCloud container, add its ID to the entitlements, pass `cloudKitDatabase: .automatic` to `ModelConfiguration`
+- CloudKit constraints on `DiaryRecord`: every property needs a default value, no unique constraints
+- Before any TestFlight/App Store build: deploy schema changes to Production in the CloudKit Console (issue #15 in `docs/overview.md`)
