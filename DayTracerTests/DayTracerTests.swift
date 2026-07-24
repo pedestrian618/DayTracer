@@ -120,7 +120,10 @@ final class ProgressCalculatorsTests: XCTestCase {
         XCTAssertEqual(interval.start, makeDate(year: 2024, month: 1, day: 1))
         XCTAssertEqual(interval.end, makeDate(year: 2025, month: 1, day: 1))
         XCTAssertEqual(ProgressCalculators.calculateYearProgress(for: interval.start), 0.0, accuracy: 1e-9)
-        XCTAssertEqual(ProgressCalculators.calculateYearProgress(for: interval.end), 1.0, accuracy: 1e-9)
+        // interval.end ちょうどは翌年の 0.0 に巻き戻るため、終端直前で 経過秒/総秒 と一致することを確認
+        let almostEnd = interval.end.addingTimeInterval(-1)
+        let expected = almostEnd.timeIntervalSince(interval.start) / interval.duration
+        XCTAssertEqual(ProgressCalculators.calculateYearProgress(for: almostEnd), expected, accuracy: 1e-9)
     }
 
     func testMonthInterval_containsDate() {

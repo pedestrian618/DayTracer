@@ -9,6 +9,14 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
 
 ## 2026-07-24
 
+### Mac 検証: フェーズ1〜3 のビルド・テスト・動作確認（＋テスト1件修正）
+- **概要**: クラウドセッション（Linux、Xcode なし）で積んだフェーズ1〜3（計器盤リデザイン／Firebase 撤去／CloudKit 有効化）を Mac で検証。課題 #9 解消。
+- **詳細**:
+  - `testYearInterval_spansExactlyOneYear` が失敗（フェーズ1で追加、未実行だった）。`calculateYearProgress(interval.end)` は翌年扱いで 0.0 に巻き戻るのが計算側の仕様のため、期待値 1.0 が誤り。他の期間テストと同じ「終端直前で 経過秒/総秒 と一致」の形に修正。
+  - ローカル `feature/claudecode` に残っていた Xcode 自動編集（entitlements のコンテナ追記＝コミット済み内容と同一、pbxproj の並び替えのみ）は stash に退避。
+- **検証**: 両ターゲットビルド成功（iPhone 15 シミュレータ）。テスト19件全合格。シミュレータで起動→記録1件保存を確認（iCloud 未サインインのためローカル保存動作。CloudKit Console の `CD_DiaryRecord` 確認と2台目同期は iCloud サインイン後に本人作業）。
+- **コミット**: （このエントリと同じコミット）
+
 ### フェーズ3: CloudKit 同期の有効化
 - **概要**: 使途記録（SwiftData `DiaryRecord`）に CloudKit private database 同期を追加。ログイン UI なしのまま、iCloud サインイン中の端末間で自動同期・自動復元になる。
 - **詳細**:
@@ -17,8 +25,8 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
   - `DayTracerApp`: `ModelConfiguration` に `cloudKitDatabase: .private("iCloud.com.junkyfly.DayTracer")` を指定。
   - `Info.plist`: `UIBackgroundModes: remote-notification` を再追加（CloudKit のサイレントプッシュ受信用。Firebase 撤去時に削除していたもの）。
   - `SettingsView` のデータ説明を「この端末 + iCloud」に更新。
-- **検証**: 未実施（Linux 環境、課題 #9 と同様）。Mac で要確認: Debug ビルド → 記録を1件保存 → CloudKit Console の Development 環境に `CD_DiaryRecord` レコード型が生成されること → 可能なら2台目端末で同期確認。**リリース前に Production へのスキーマデプロイ必須（課題 #15・新規）**。
-- **コミット**: （このエントリと同じコミット）
+- **検証**: 未実施（Linux 環境、課題 #9 と同様）。Mac で要確認: Debug ビルド → 記録を1件保存 → CloudKit Console の Development 環境に `CD_DiaryRecord` レコード型が生成されること → 可能なら2台目端末で同期確認。**リリース前に Production へのスキーマデプロイ必須（課題 #15・新規）**。→ 2026-07-24 Mac でビルド・テスト・保存まで検証済（上記エントリ）。
+- **コミット**: 3ff8533
 
 ### フェーズ2: Firebase 依存の全撤去（オフラインファースト化）
 - **概要**: Firebase / Firestore / GoogleSignIn を依存ごと削除し、使途記録を SwiftData ローカル保存へ移行。ログイン概念を廃止し、外部パッケージ依存ゼロに。実機ビルドで出ていた gRPC-C++ の `CFBundleIdentifier` エラーも依存撤去により根治。
@@ -32,8 +40,8 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
   - `project.pbxproj`: firebase-ios-sdk / GoogleSignIn-iOS のパッケージ参照・プロダクト依存・Frameworks エントリ・GoogleService-Info.plist 参照を全削除。
   - `Info.plist`: Google URL スキームと `UIBackgroundModes: remote-notification` を削除。
   - 注意: 旧 Firestore 上の記録は移行していない（課題 #13）。CloudKit 同期は未有効化（課題 #14）。
-- **検証**: **未実施**（Linux 環境に Xcode なし、課題 #9 と同様）。Mac で要確認: 両ターゲットビルド → テスト19件 → 投稿/削除→ウィジェット反映、既存インストールからのアップデートで SwiftData ストアが正常に開くこと。
-- **コミット**: （このエントリと同じコミット）
+- **検証**: **未実施**（Linux 環境に Xcode なし、課題 #9 と同様）。Mac で要確認: 両ターゲットビルド → テスト19件 → 投稿/削除→ウィジェット反映、既存インストールからのアップデートで SwiftData ストアが正常に開くこと。→ 2026-07-24 Mac でビルド・テスト・投稿まで検証済（上記エントリ）。
+- **コミット**: 3b4857a
 
 ### UI・プロダクト再設計フェーズ1: 「残り時間の計器盤」化
 - **概要**: コンセプトを「経過率の表示」から「残量（残り時間）の計器盤」へ再定義し、ホーム画面とウィジェット全サイズを刷新。masume のデザイン運用（単一トークン enum・リテラル禁止・両ターゲット共有）を輸入しつつ、世界観は対極（ダーク盤面・等幅数字・アンバー単色）に振った。
@@ -44,8 +52,8 @@ DayTracer の作業履歴。**新しい作業を上に追記**する（逆時系
   - `ContentView`: 旧ブルーテーマの UIAppearance を削除、`preferredColorScheme(.dark)` 固定＋アンバー tint。
   - ウィジェット3サイズ刷新: `Text(timerInterval:)` / `ProgressView(timerInterval:countsDown:)` で今日の残りをタイムライン更新なしに毎秒駆動。ロック画面3種は「残り」表記へ反転。盤面色の `containerBackground`。
   - `ProgressCalculators`: `dayInterval/weekInterval/monthInterval/yearInterval`、`remainingTimeOfYear`、`dayOfYear/daysInYear/dayWeightOfYear` を追加（テスト8件追加、計19件）。
-- **検証**: **未実施（要注意）**。実装環境（リモートLinux）に Xcode/Swift ツールチェーンが無く、`xcodebuild` によるビルド・テストを実行できなかった。次に Mac で開く際に必ず: 両ターゲットのビルド → テスト19件 → シミュレータでホーム/ウィジェット表示（特に `timerInterval` 系の描画と pbxproj 登録）を確認すること（課題 #9）。
-- **コミット**: （このエントリと同じコミット）
+- **検証**: **未実施（要注意）**。実装環境（リモートLinux）に Xcode/Swift ツールチェーンが無く、`xcodebuild` によるビルド・テストを実行できなかった。次に Mac で開く際に必ず: 両ターゲットのビルド → テスト19件 → シミュレータでホーム/ウィジェット表示（特に `timerInterval` 系の描画と pbxproj 登録）を確認すること（課題 #9）。→ 2026-07-24 Mac で検証済（テスト1件修正、上記エントリ）。
+- **コミット**: e865f0f
 
 ## 2026-06-21
 

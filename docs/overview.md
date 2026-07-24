@@ -110,7 +110,7 @@ masume の運用（単一トークン enum＋リテラル禁止）を輸入し�
 | 6 | ~~**強制アンラップ** が `AuthenticationManager.googleAuth()`~~ — ✅ 2026-06-20 に `windows.first!`/`rootViewController!` を `guard` 化。 | クラッシュ要因 | ✅ 解消 |
 | 7 | ~~**SwiftData(`Item`) がほぼ未使用**~~ — ✅ 2026-07-24 解消。`Item` を `DiaryRecord` に置き換え、使途記録の本体ストレージとして採用。 | 設計の宙ぶらりん | ✅ 解消 |
 | 8 | ~~**Settings がログイン済みでも「Sign in to continue」表示**~~ — ✅ 2026-06-20 解消。認証状態のソースが2系統に分かれていた（Notes/Home は `currentUser` 直接、Settings は別フラグ）。`AuthenticationManager` を起動時に `currentUser` から即時反映するよう修正。 | サインイン状態の誤表示 | ✅ 解消 |
-| 9 | **2026-07-24 のUI刷新はビルド・テスト未実行** — 実装環境（Linux）に Xcode/Swift が無く `xcodebuild` を実行できなかった。特に `project.pbxproj` の手編集（`DesignTokens.swift` 登録）と `timerInterval` 系 API の実機描画は要確認。 | コンパイル・表示の未検証 | **高** |
+| 9 | ~~**2026-07-24 のUI刷新はビルド・テスト未実行**~~ — ✅ 2026-07-24 Mac で検証済。両ターゲットビルド成功・テスト19件合格（`testYearInterval_spansExactlyOneYear` は期待値の誤り（`interval.end` ちょうどは翌年の 0.0 に巻き戻る仕様）だったため修正）。シミュレータで記録の保存も確認。 | コンパイル・表示の未検証 | ✅ 解消 |
 | 10 | **ウィジェットの色設定（AppIntent）が新デザインで未使用** — 計器盤はアンバー単色になったため `selectedColor` / `selectedSubColor` が表示に反映されない。設定UIだけ残っている。選択肢をアクセント色差し替えとして再接続するか、設定ごと削除するか要判断。 | 設定が効かない | 中 |
 | 11 | **WelcomeView / NotesView / SettingsView が新世界観に未追随** — ダーク固定にはなるが、トークン（DS）未適用でトーンが揃っていない。文言も英日混在のまま。 | 世界観の不統一 | 中 |
 | 12 | **365日グリッドの「今日」が日付跨ぎで自動更新されない** — グリッドは `onAppear` 時の日付で描画（毎フレーム再描画を避けるため）。0時を跨いだら再表示まで前日のまま。 | 表示のズレ（軽微） | 低 |
